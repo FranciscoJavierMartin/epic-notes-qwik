@@ -1,7 +1,14 @@
 import Button from '@/components/ui/button';
 import { kodyNotes } from '@/db/db.server';
 import { component$ } from '@builder.io/qwik';
-import { Form, Link, routeAction$, routeLoader$ } from '@builder.io/qwik-city';
+import {
+	Form,
+	Link,
+	routeAction$,
+	routeLoader$,
+	z,
+	zod$,
+} from '@builder.io/qwik-city';
 
 export const useNote = routeLoader$(async ({ params, error }) => {
 	const note = kodyNotes.find((note) => note.id === params.noteId);
@@ -15,8 +22,11 @@ export const useNote = routeLoader$(async ({ params, error }) => {
 
 export const useRemoveNote = routeAction$(
 	async ({ intent }, { params, redirect }) => {
-		console.log(intent);
+		redirect(302, `/users/${params.username}/notes/`);
 	},
+	zod$({
+		intent: z.enum(['delete']),
+	}),
 );
 
 export default component$(() => {

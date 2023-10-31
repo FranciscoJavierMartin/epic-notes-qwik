@@ -58,19 +58,42 @@ export default component$(() => {
 	const data = useOwnerNotes();
 
 	return (
-		<>
-			<h1>{location.params.username} Notes</h1>
-			<Link href={`/users/${location.params.username}`}>Back to user</Link>
-			<ul>
-				{data.value.notes.map((note) => (
-					<li key={note.id}>
-						<Link href={`/users/${location.params.username}/notes/${note.id}`}>
-							{note.title}
+		<main class='container flex h-full min-h-[400px] px-0 pb-12 md:px-8'>
+			<div class='bg-muted grid w-full grid-cols-4 pl-2 md:container md:mx-2 md:rounded-3xl md:pr-0'>
+				<div class='relative col-span-1'>
+					<div class='absolute inset-0 flex flex-col'>
+						<Link
+							href={`/users/${location.params.username}`}
+							class='pb-4 pl-8 pr-4 pt-12'
+						>
+							<h1 class='text-base font-bold md:text-lg lg:text-left lg:text-2xl'>
+								{data.value.owner.name ?? data.value.owner.username}'s Notes
+							</h1>
 						</Link>
-					</li>
-				))}
-			</ul>
-			<Slot />
-		</>
+						<ul class='overflow-y-auto overflow-x-hidden pb-12'>
+							{data.value.notes.map((note) => (
+								<li key={note.id} class='p-1 pr-0'>
+									<Link
+										href={`/users/${location.params.username}/notes/${note.id}`}
+										class={{
+											'line-clamp-2 block rounded-l-full py-2 pl-8 pr-6 text-base lg:text-xl':
+												true,
+											'bg-accent':
+												location.url.pathname ===
+												`/users/${location.params.username}/notes/${note.id}/`,
+										}}
+									>
+										{note.title}
+									</Link>
+								</li>
+							))}
+						</ul>
+					</div>
+				</div>
+				<div class='bg-accent relative col-span-3 md:rounded-r-3xl'>
+					<Slot />
+				</div>
+			</div>
+		</main>
 	);
 });

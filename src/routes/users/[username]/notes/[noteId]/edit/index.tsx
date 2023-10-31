@@ -1,5 +1,11 @@
 import { component$ } from '@builder.io/qwik';
-import { Form, routeLoader$ } from '@builder.io/qwik-city';
+import {
+	Form,
+	routeAction$,
+	routeLoader$,
+	z,
+	zod$,
+} from '@builder.io/qwik-city';
 import Button from '@/components/ui/button';
 import Input from '@/components/ui/input';
 import Label from '@/components/ui/label';
@@ -16,11 +22,25 @@ export const useNote = routeLoader$(async ({ params, error }) => {
 	return { note: { title: note.title, content: note.content } };
 });
 
+export const useEditNote = routeAction$(
+	async ({ title, content }, { params, redirect }) => {
+		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
+	},
+	zod$({
+		title: z.string(),
+		content: z.string(),
+	}),
+);
+
 export default component$(() => {
 	const data = useNote();
+	const editNote = useEditNote();
 
 	return (
-		<Form class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'>
+		<Form
+			action={editNote}
+			class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
+		>
 			<div class='flex flex-col gap-1'>
 				<div>
 					<Label>Title</Label>

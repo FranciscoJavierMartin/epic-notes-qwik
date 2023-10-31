@@ -61,6 +61,7 @@ export default component$(() => {
 						<ul class='overflow-y-auto overflow-x-hidden pb-12'>
 							{data.value.notes.map((note) => (
 								<li key={note.id} class='p-1 pr-0'>
+									{/* FIXME: Fix current link */}
 									<Link
 										href={`/users/${location.params.username}/notes/${note.id}`}
 										class={cn(

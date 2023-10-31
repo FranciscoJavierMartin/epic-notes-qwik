@@ -1,7 +1,7 @@
 import Button from '@/components/ui/button';
 import { kodyNotes } from '@/db/db.server';
 import { component$ } from '@builder.io/qwik';
-import { Form, Link, routeLoader$ } from '@builder.io/qwik-city';
+import { Form, Link, routeAction$, routeLoader$ } from '@builder.io/qwik-city';
 
 export const useNote = routeLoader$(async ({ params, error }) => {
 	const note = kodyNotes.find((note) => note.id === params.noteId);
@@ -13,8 +13,15 @@ export const useNote = routeLoader$(async ({ params, error }) => {
 	return { note: { title: note.title, content: note.content } };
 });
 
+export const useRemoveNote = routeAction$(
+	async ({ intent }, { params, redirect }) => {
+		console.log(intent);
+	},
+);
+
 export default component$(() => {
 	const data = useNote();
+	const removeNote = useRemoveNote();
 
 	return (
 		<div class='absolute inset-0 flex flex-col px-10'>
@@ -25,7 +32,7 @@ export default component$(() => {
 				</p>
 			</div>
 			<div class='floating-toolbar'>
-				<Form>
+				<Form action={removeNote}>
 					<Button
 						type='submit'
 						variant='destructive'

@@ -1,4 +1,4 @@
-import { db } from '@/db/db.server';
+import { db, kodyNotes } from '@/db/db.server';
 import { cn } from '@/utils/misc';
 import { Slot, component$ } from '@builder.io/qwik';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
@@ -36,20 +36,7 @@ export const useOwnerNotes = routeLoader$(async ({ params, error }) => {
 		createdAt: new Date('2023-10-30T22:27:04.762Z'),
 	};
 
-	const notes = [
-		{ id: 'd27a197e', title: 'Basic Koala Facts' },
-		{ id: '414f0c09', title: 'Koalas like to cuddle' },
-		{ id: '260366b1', title: 'Not bears' },
-		{ id: 'bb79cf45', title: 'Snowboarding Adventure' },
-		{ id: '9f4308be', title: 'Onewheel Tricks' },
-		{ id: '306021fb', title: 'Coding Dilemma' },
-		{ id: '16d4912a', title: 'Coding Mentorship' },
-		{ id: '3199199e', title: 'Koala Fun Facts' },
-		{ id: '2030ffd3', title: 'Skiing Adventure' },
-		{ id: 'f375a804', title: 'Code Jam Success' },
-		{ id: '562c541b', title: 'Koala Conservation Efforts' },
-		{ id: 'f67ca40b', title: 'Game day' },
-	];
+	const notes = kodyNotes.map(({ id, title }) => ({ id, title }));
 
 	return { owner, notes };
 });

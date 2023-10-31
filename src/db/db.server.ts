@@ -33,7 +33,7 @@ const kody = db.user.create({
 	name: 'Kody',
 });
 
-const kodyNotes = [
+export const kodyNotes = [
 	{
 		id: 'd27a197e',
 		title: 'Basic Koala Facts',

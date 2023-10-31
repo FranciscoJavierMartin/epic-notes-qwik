@@ -1,4 +1,5 @@
 import { db } from '@/db/db.server';
+import { cn } from '@/utils/misc';
 import { Slot, component$ } from '@builder.io/qwik';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
 
@@ -75,13 +76,12 @@ export default component$(() => {
 								<li key={note.id} class='p-1 pr-0'>
 									<Link
 										href={`/users/${location.params.username}/notes/${note.id}`}
-										class={{
-											'line-clamp-2 block rounded-l-full py-2 pl-8 pr-6 text-base lg:text-xl':
-												true,
-											'bg-accent':
-												location.url.pathname ===
-												`/users/${location.params.username}/notes/${note.id}/`,
-										}}
+										class={cn(
+											'line-clamp-2 block rounded-l-full py-2 pl-8 pr-6 text-base lg:text-xl',
+											location.url.pathname ===
+												`/users/${location.params.username}/notes/${note.id}/` &&
+												'bg-accent',
+										)}
 									>
 										{note.title}
 									</Link>

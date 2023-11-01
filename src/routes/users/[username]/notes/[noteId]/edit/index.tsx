@@ -3,10 +3,11 @@ import {
 	Form,
 	routeAction$,
 	routeLoader$,
+	useNavigate,
 	z,
 	zod$,
 } from '@builder.io/qwik-city';
-import { Button, Label, Input, Textarea } from '@/components/ui';
+import { Button, Label, Input, Textarea, StatusButton } from '@/components/ui';
 import { kodyNotes } from '@/db/db.server';
 
 export const useNote = routeLoader$(async ({ params, error }) => {
@@ -52,7 +53,13 @@ export default component$(() => {
 				<Button variant='destructive' type='reset'>
 					Reset
 				</Button>
-				<Button type='submit'>Submit</Button>
+				<StatusButton
+					type='submit'
+					disabled={editNote.isRunning}
+					status={editNote.isRunning ? 'pending' : 'idle'}
+				>
+					Submit
+				</StatusButton>
 			</div>
 		</Form>
 	);

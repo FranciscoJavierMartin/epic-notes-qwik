@@ -1,5 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 import {
+	type DocumentHead,
 	Form,
 	Link,
 	routeAction$,
@@ -7,8 +8,31 @@ import {
 	z,
 	zod$,
 } from '@builder.io/qwik-city';
-import { kodyNotes } from '@/db/db.server';
 import { Button } from '@/components/ui';
+import { useOwnerNotes } from '../layout';
+import { kodyNotes } from '@/db/db.server';
+
+export const head: DocumentHead = ({ resolveValue, params }) => {
+	const data = resolveValue(useOwnerNotes);
+	const { note } = resolveValue(useNote);
+
+	const displayName = data.owner.name ?? params.username;
+	const noteTitle = note.title ?? 'Note';
+	const noteContentsSummary =
+		note && note.content.length > 100
+			? note.content.slice(0, 97) + '...'
+			: 'No content';
+
+	return {
+		title: `${noteTitle} | ${displayName}'s Notes | Epic Notes`,
+		meta: [
+			{
+				name: 'description',
+				content: noteContentsSummary,
+			},
+		],
+	};
+};
 
 export const useNote = routeLoader$(async ({ params, error }) => {
 	const note = kodyNotes.find((note) => note.id === params.noteId);

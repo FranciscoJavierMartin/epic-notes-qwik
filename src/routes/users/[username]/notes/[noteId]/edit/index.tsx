@@ -3,7 +3,6 @@ import {
 	Form,
 	routeAction$,
 	routeLoader$,
-	useNavigate,
 	z,
 	zod$,
 } from '@builder.io/qwik-city';

@@ -6,7 +6,7 @@ import {
 	useLocation,
 } from '@builder.io/qwik-city';
 
-export const useUserProfile = routeLoader$(async ({ params }) => {
+export const useUserProfile = routeLoader$(async ({ params, error }) => {
 	const user = {
 		id: '9d6eba59daa2fc2078cf8205cd451041',
 		email: 'kody@kcd.dev',
@@ -14,6 +14,10 @@ export const useUserProfile = routeLoader$(async ({ params }) => {
 		name: 'Kody',
 		createdAt: new Date('2023-10-30T22:27:04.762Z'),
 	};
+
+	if (!user) {
+		throw error(404, 'User not found');
+	}
 
 	return { user };
 });

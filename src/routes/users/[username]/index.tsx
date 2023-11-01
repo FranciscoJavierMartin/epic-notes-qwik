@@ -1,5 +1,10 @@
 import { component$ } from '@builder.io/qwik';
-import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
+import {
+	type DocumentHead,
+	Link,
+	routeLoader$,
+	useLocation,
+} from '@builder.io/qwik-city';
 
 export const useUserProfile = routeLoader$(async ({ params }) => {
 	const user = {
@@ -32,3 +37,12 @@ export default component$(() => {
 		</div>
 	);
 });
+
+export const head: DocumentHead = () => {
+	return {
+		title: 'Profile | Epic Notes',
+		meta: [
+			{ name: 'description', content: 'Checkout this profile on Epic Notes' },
+		],
+	};
+};

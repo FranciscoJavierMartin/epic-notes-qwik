@@ -1,5 +1,9 @@
 import { component$, Slot } from '@builder.io/qwik';
-import { Link } from '@builder.io/qwik-city';
+import {
+	type DocumentHead,
+	Link,
+	type DocumentMeta,
+} from '@builder.io/qwik-city';
 
 export default component$(() => {
 	return (
@@ -26,3 +30,21 @@ export default component$(() => {
 		</>
 	);
 });
+
+export const head: DocumentHead = ({ head }) => {
+	const meta = new Map<string, DocumentMeta>();
+
+	meta.set('description', {
+		name: 'description',
+		content: "Your own captain's log",
+	});
+
+	head.meta.forEach((metaTag) => {
+		meta.delete(metaTag.name ?? '');
+	});
+
+	return {
+		title: head.title ?? 'Epic Notes',
+		meta: [...meta.values()],
+	};
+};

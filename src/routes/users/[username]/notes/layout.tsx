@@ -64,6 +64,7 @@ export default component$(() => {
 									{/* FIXME: Fix current link */}
 									<Link
 										href={`/users/${location.params.username}/notes/${note.id}`}
+										prefetch
 										class={cn(
 											'line-clamp-2 block rounded-l-full py-2 pl-8 pr-6 text-base lg:text-xl',
 											location.url.pathname ===

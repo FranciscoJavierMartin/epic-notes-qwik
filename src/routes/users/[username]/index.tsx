@@ -22,7 +22,11 @@ export default component$(() => {
 			<h1 class='text-h1'>
 				{data.value.user.name ?? data.value.user.username}
 			</h1>
-			<Link href={`/users/${location.params.username}/notes`} class='underline'>
+			<Link
+				href={`/users/${location.params.username}/notes`}
+				class='underline'
+				prefetch
+			>
 				Notes
 			</Link>
 		</div>

@@ -38,11 +38,17 @@ export default component$(() => {
 	);
 });
 
-export const head: DocumentHead = () => {
+export const head: DocumentHead = ({ resolveValue, params }) => {
+	const data = resolveValue(useUserProfile);
+	const displayName = data.user.name ?? params.username;
+
 	return {
-		title: 'Profile | Epic Notes',
+		title: `${displayName} | Epic Notes`,
 		meta: [
-			{ name: 'description', content: 'Checkout this profile on Epic Notes' },
+			{
+				name: 'description',
+				content: `Profile of ${displayName} on Epic Notes`,
+			},
 		],
 	};
 };

@@ -1,7 +1,7 @@
-import { db, kodyNotes } from '@/db/db.server';
-import { cn } from '@/utils/misc';
 import { Slot, component$ } from '@builder.io/qwik';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
+import { cn } from '@/utils/misc';
+import { db, kodyNotes } from '@/db/db.server';
 
 export const useOwnerNotes = routeLoader$(async ({ params, error }) => {
 	// const owner = db.user.findFirst({

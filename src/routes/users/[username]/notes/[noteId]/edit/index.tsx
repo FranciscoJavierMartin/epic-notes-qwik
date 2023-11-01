@@ -6,10 +6,7 @@ import {
 	z,
 	zod$,
 } from '@builder.io/qwik-city';
-import Button from '@/components/ui/button';
-import Input from '@/components/ui/input';
-import Label from '@/components/ui/label';
-import Textarea from '@/components/ui/textarea';
+import { Button, Label, Input, Textarea } from '@/components/ui';
 import { kodyNotes } from '@/db/db.server';
 
 export const useNote = routeLoader$(async ({ params, error }) => {

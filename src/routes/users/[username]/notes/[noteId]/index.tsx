@@ -1,5 +1,3 @@
-import Button from '@/components/ui/button';
-import { kodyNotes } from '@/db/db.server';
 import { component$ } from '@builder.io/qwik';
 import {
 	Form,
@@ -9,6 +7,8 @@ import {
 	z,
 	zod$,
 } from '@builder.io/qwik-city';
+import { kodyNotes } from '@/db/db.server';
+import { Button } from '@/components/ui';
 
 export const useNote = routeLoader$(async ({ params, error }) => {
 	const note = kodyNotes.find((note) => note.id === params.noteId);

@@ -1,4 +1,24 @@
 import { component$ } from '@builder.io/qwik';
+import { type DocumentHead } from '@builder.io/qwik-city';
+import { useOwnerNotes } from './layout';
+
+export const head: DocumentHead = ({ resolveValue, params }) => {
+	const data = resolveValue(useOwnerNotes);
+
+	const displayName = data.owner.name ?? params.username;
+	const noteCount = data.notes.length ?? 0;
+	const notesText = noteCount === 1 ? 'note' : 'notes';
+
+	return {
+		title: `${displayName}'s Notes | Epic Notes`,
+		meta: [
+			{
+				name: 'description',
+				content: `Checkout ${displayName}'s ${noteCount} ${notesText} on Epic Notes`,
+			},
+		],
+	};
+};
 
 export default component$(() => {
 	return (

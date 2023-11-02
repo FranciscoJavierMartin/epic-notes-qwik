@@ -62,8 +62,9 @@ export default component$(() => {
 			>
 				<div class='flex flex-col gap-1'>
 					<div>
-						<Label>Title</Label>
+						<Label for='note-title'>Title</Label>
 						<Input
+							id='note-title'
 							name='title'
 							value={data.value.note.title}
 							required
@@ -74,8 +75,9 @@ export default component$(() => {
 						</div>
 					</div>
 					<div>
-						<Label>Content</Label>
+						<Label for='note-title'>Content</Label>
 						<Textarea
+							id='note-content'
 							name='content'
 							value={data.value.note.content}
 							required
@@ -89,7 +91,7 @@ export default component$(() => {
 				<ErrorList errors={editNote.value?.formErrors} />
 			</Form>
 			<div class='floating-toolbar'>
-				<Button variant='destructive' type='reset'>
+				<Button form='note-editor' variant='destructive' type='reset'>
 					Reset
 				</Button>
 				<StatusButton

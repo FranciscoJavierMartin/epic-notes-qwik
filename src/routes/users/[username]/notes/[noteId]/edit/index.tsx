@@ -54,6 +54,7 @@ export default component$(() => {
 	const editNote = useEditNote();
 	const formEl = useSignal<HTMLFormElement>();
 
+	// FIXME: Fix autofocus when error happens
 	useTask$(({ track }) => {
 		track(() => editNote.value?.failed);
 

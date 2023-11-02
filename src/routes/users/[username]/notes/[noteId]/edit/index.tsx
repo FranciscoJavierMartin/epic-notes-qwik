@@ -37,6 +37,18 @@ export const useEditNote = routeAction$(
 	}),
 );
 
+function ErrorList({ errors }: { errors?: string[] | null }) {
+	return errors?.length ? (
+		<ul class='flex flex-col gap-1'>
+			{errors.map((error, i) => (
+				<li key={i} class='text-[10px] text-foreground-destructive'>
+					{error}
+				</li>
+			))}
+		</ul>
+	) : null;
+}
+
 export default component$(() => {
 	const data = useNote();
 	const editNote = useEditNote();
@@ -49,11 +61,27 @@ export default component$(() => {
 			<div class='flex flex-col gap-1'>
 				<div>
 					<Label>Title</Label>
-					<Input name='title' value={data.value.note.title} />
+					<Input
+						name='title'
+						value={data.value.note.title}
+						required
+						maxLength={100}
+					/>
+					<div class='min-h-[32px] px-4 pb-3 pt-1'>
+						<ErrorList errors={editNote.value?.fieldErrors?.title} />
+					</div>
 				</div>
 				<div>
 					<Label>Content</Label>
-					<Textarea name='content' value={data.value.note.content} />
+					<Textarea
+						name='content'
+						value={data.value.note.content}
+						required
+						maxLength={10000}
+					/>
+					<div class='min-h-[32px] px-4 pb-3 pt-1'>
+						<ErrorList errors={editNote.value?.fieldErrors?.content} />
+					</div>
 				</div>
 			</div>
 			<div class='floating-toolbar'>

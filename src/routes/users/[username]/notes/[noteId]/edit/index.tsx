@@ -1,4 +1,4 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 import {
 	Form,
 	routeAction$,
@@ -52,12 +52,33 @@ function ErrorList({ id, errors }: { id?: string; errors?: string[] | null }) {
 export default component$(() => {
 	const data = useNote();
 	const editNote = useEditNote();
+	const formEl = useSignal<HTMLFormElement>();
+
+	useTask$(({ track }) => {
+		track(() => editNote.value?.failed);
+
+		if (formEl.value && editNote.value?.failed) {
+			if (formEl.value.matches('[aria-invalid="true"]')) {
+				formEl.value.focus();
+			} else {
+				const firstInvalid = formEl.value.querySelector(
+					'[aria-invalid="true"]',
+				);
+
+				if (firstInvalid instanceof HTMLElement) {
+					firstInvalid.focus();
+				}
+			}
+		}
+	});
 
 	return (
 		<div>
 			<Form
 				id='note-editor'
 				action={editNote}
+				ref={formEl}
+				tabIndex={-1}
 				aria-invalid={Boolean(editNote.value?.formErrors?.length) || undefined}
 				aria-describedby={
 					editNote.value?.formErrors?.length ? 'form-error' : undefined

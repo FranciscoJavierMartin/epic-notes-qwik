@@ -1,4 +1,4 @@
-import { component$, useSignal, useTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 import {
 	Form,
 	routeAction$,
@@ -54,8 +54,7 @@ export default component$(() => {
 	const editNote = useEditNote();
 	const formEl = useSignal<HTMLFormElement>();
 
-	// FIXME: Fix autofocus when error happens
-	useTask$(({ track }) => {
+	useVisibleTask$(({ track }) => {
 		track(() => editNote.value?.failed);
 
 		if (formEl.value && editNote.value?.failed) {

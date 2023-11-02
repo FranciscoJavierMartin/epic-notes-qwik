@@ -54,41 +54,46 @@ export default component$(() => {
 	const editNote = useEditNote();
 
 	return (
-		<Form
-			action={editNote}
-			class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
-		>
-			<div class='flex flex-col gap-1'>
-				<div>
-					<Label>Title</Label>
-					<Input
-						name='title'
-						value={data.value.note.title}
-						required
-						maxLength={100}
-					/>
-					<div class='min-h-[32px] px-4 pb-3 pt-1'>
-						<ErrorList errors={editNote.value?.fieldErrors?.title} />
+		<div>
+			<Form
+				id='note-editor'
+				action={editNote}
+				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
+			>
+				<div class='flex flex-col gap-1'>
+					<div>
+						<Label>Title</Label>
+						<Input
+							name='title'
+							value={data.value.note.title}
+							required
+							maxLength={100}
+						/>
+						<div class='min-h-[32px] px-4 pb-3 pt-1'>
+							<ErrorList errors={editNote.value?.fieldErrors?.title} />
+						</div>
+					</div>
+					<div>
+						<Label>Content</Label>
+						<Textarea
+							name='content'
+							value={data.value.note.content}
+							required
+							maxLength={10000}
+						/>
+						<div class='min-h-[32px] px-4 pb-3 pt-1'>
+							<ErrorList errors={editNote.value?.fieldErrors?.content} />
+						</div>
 					</div>
 				</div>
-				<div>
-					<Label>Content</Label>
-					<Textarea
-						name='content'
-						value={data.value.note.content}
-						required
-						maxLength={10000}
-					/>
-					<div class='min-h-[32px] px-4 pb-3 pt-1'>
-						<ErrorList errors={editNote.value?.fieldErrors?.content} />
-					</div>
-				</div>
-			</div>
+				<ErrorList errors={editNote.value?.formErrors} />
+			</Form>
 			<div class='floating-toolbar'>
 				<Button variant='destructive' type='reset'>
 					Reset
 				</Button>
 				<StatusButton
+					form='note-editor'
 					type='submit'
 					disabled={editNote.isRunning}
 					status={editNote.isRunning ? 'pending' : 'idle'}
@@ -96,6 +101,6 @@ export default component$(() => {
 					Submit
 				</StatusButton>
 			</div>
-		</Form>
+		</div>
 	);
 });

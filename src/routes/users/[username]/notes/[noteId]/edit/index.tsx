@@ -24,8 +24,16 @@ export const useEditNote = routeAction$(
 		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
 	},
 	zod$({
-		title: z.string(),
-		content: z.string(),
+		title: z
+			.string()
+			.trim()
+			.min(1, 'Title is required')
+			.max(100, 'Title must be at most 100 characters'),
+		content: z
+			.string()
+			.trim()
+			.min(1, 'Content is required')
+			.max(10000, 'Content must be at most 10000 characters'),
 	}),
 );
 

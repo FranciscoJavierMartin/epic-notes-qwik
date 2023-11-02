@@ -37,9 +37,9 @@ export const useEditNote = routeAction$(
 	}),
 );
 
-function ErrorList({ errors }: { errors?: string[] | null }) {
+function ErrorList({ id, errors }: { id?: string; errors?: string[] | null }) {
 	return errors?.length ? (
-		<ul class='flex flex-col gap-1'>
+		<ul id={id} class='flex flex-col gap-1'>
 			{errors.map((error, i) => (
 				<li key={i} class='text-[10px] text-foreground-destructive'>
 					{error}
@@ -58,6 +58,10 @@ export default component$(() => {
 			<Form
 				id='note-editor'
 				action={editNote}
+				aria-invalid={Boolean(editNote.value?.formErrors?.length) || undefined}
+				aria-describedby={
+					editNote.value?.formErrors?.length ? 'form-error' : undefined
+				}
 				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
 			>
 				<div class='flex flex-col gap-1'>
@@ -69,9 +73,25 @@ export default component$(() => {
 							value={data.value.note.title}
 							required
 							maxLength={100}
+							aria-invalid={
+								Boolean(editNote.value?.fieldErrors?.title?.length) || undefined
+							}
+							aria-describedby={
+								editNote.value?.fieldErrors?.title?.length
+									? 'title-error'
+									: undefined
+							}
+							autoFocus
 						/>
 						<div class='min-h-[32px] px-4 pb-3 pt-1'>
-							<ErrorList errors={editNote.value?.fieldErrors?.title} />
+							<ErrorList
+								id={
+									editNote.value?.fieldErrors?.title?.length
+										? 'title-error'
+										: undefined
+								}
+								errors={editNote.value?.fieldErrors?.title}
+							/>
 						</div>
 					</div>
 					<div>
@@ -82,13 +102,32 @@ export default component$(() => {
 							value={data.value.note.content}
 							required
 							maxLength={10000}
+							aria-invalid={
+								Boolean(editNote.value?.fieldErrors?.content?.length) ||
+								undefined
+							}
+							aria-describedby={
+								editNote.value?.fieldErrors?.content?.length
+									? 'content-error'
+									: undefined
+							}
 						/>
 						<div class='min-h-[32px] px-4 pb-3 pt-1'>
-							<ErrorList errors={editNote.value?.fieldErrors?.content} />
+							<ErrorList
+								id={
+									editNote.value?.fieldErrors?.content?.length
+										? 'content-error'
+										: undefined
+								}
+								errors={editNote.value?.fieldErrors?.content}
+							/>
 						</div>
 					</div>
 				</div>
-				<ErrorList errors={editNote.value?.formErrors} />
+				<ErrorList
+					id={editNote.value?.formErrors?.length ? 'form-error' : undefined}
+					errors={editNote.value?.formErrors}
+				/>
 			</Form>
 			<div class='floating-toolbar'>
 				<Button form='note-editor' variant='destructive' type='reset'>

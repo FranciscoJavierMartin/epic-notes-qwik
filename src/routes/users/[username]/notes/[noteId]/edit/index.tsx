@@ -54,6 +54,7 @@ export default component$(() => {
 	const editNote = useEditNote();
 	const formEl = useSignal<HTMLFormElement>();
 
+	// TODO: Move to hook
 	useVisibleTask$(({ track }) => {
 		track(() => editNote.value?.failed);
 

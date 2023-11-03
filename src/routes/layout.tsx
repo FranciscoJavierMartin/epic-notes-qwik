@@ -44,7 +44,7 @@ export const head: DocumentHead = ({ head }) => {
 	});
 
 	return {
-		title: head.title ?? 'Epic Notes',
+		title: head.title || 'Epic Notes',
 		meta: [...meta.values()],
 	};
 };

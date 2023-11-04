@@ -41,7 +41,13 @@ export const useNote = routeLoader$(async ({ params, error }) => {
 		throw error(404, 'Note not found');
 	}
 
-	return { note: { title: note.title, content: note.content } };
+	return {
+		note: {
+			title: note.title,
+			content: note.content,
+			images: [] as { id: string; altText: string }[],
+		},
+	};
 });
 
 export const useRemoveNote = routeAction$(
@@ -59,8 +65,23 @@ export default component$(() => {
 
 	return (
 		<div class='absolute inset-0 flex flex-col px-10'>
-			<h2 class='text-h2 mb-2 pt-12 lg:mb-6'>{data.value.note.title}</h2>
+			<h2 class='mb-2 pt-12 text-h2 lg:mb-6'>{data.value.note.title}</h2>
 			<div class='overflow-y-auto pb-24'>
+				<ul class='flex flex-wrap gap-5 py-5'>
+					{data.value.note.images.map((image) => (
+						<li key={image.id}>
+							<a href={`/api/images/${image.id}`}>
+								<img
+									src={`/api/images/${image.id}`}
+									alt={image.altText ?? ''}
+									class='h-32 w-32 rounded-lg object-cover'
+									width={128}
+									height={128}
+								/>
+							</a>
+						</li>
+					))}
+				</ul>
 				<p class='whitespace-break-spaces text-sm md:text-lg'>
 					{data.value.note.content}
 				</p>

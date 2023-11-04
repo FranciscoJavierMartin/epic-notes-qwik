@@ -1,7 +1,6 @@
+import { type QwikChangeEvent, component$, useSignal } from '@builder.io/qwik';
 import { cn } from '@/utils/misc';
-import { component$, useSignal } from '@builder.io/qwik';
-import Label from './label';
-import Textarea from './textarea';
+import { Label, Textarea } from './';
 
 interface ImagePickerProps {
 	image?: { id: string; altText?: string | null };
@@ -57,6 +56,21 @@ export default component$<ImagePickerProps>(({ image }) => {
 								accept='image/*'
 								aria-label='Image'
 								class='absolute left-0 top-0 z-0 h-32 w-32 cursor-pointer opacity-0'
+								onChange$={(event: QwikChangeEvent<HTMLInputElement>) => {
+									const file: File | undefined = event.target.files?.[0];
+
+									if (file) {
+										const reader = new FileReader();
+
+										reader.onloadend = () => {
+											previewImage.value = reader.result as string;
+										};
+
+										reader.readAsDataURL(file);
+									} else {
+										previewImage.value = null;
+									}
+								}}
 							/>
 						</label>
 					</div>

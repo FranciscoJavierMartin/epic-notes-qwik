@@ -14,6 +14,9 @@ export default component$(() => {
 						<div class='font-light'>epic</div>
 						<div class='font-bold'>notes</div>
 					</Link>
+					<Link href='/signup' class='underline'>
+						Signup
+					</Link>
 				</nav>
 			</header>
 			<div class='flex-1'>

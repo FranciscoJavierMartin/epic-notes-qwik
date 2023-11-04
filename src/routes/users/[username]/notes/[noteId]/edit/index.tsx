@@ -1,4 +1,9 @@
-import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import {
+	component$,
+	useComputed$,
+	useSignal,
+	useVisibleTask$,
+} from '@builder.io/qwik';
 import {
 	Form,
 	routeAction$,
@@ -102,6 +107,10 @@ export default component$(() => {
 		}
 	});
 
+	const imageList = useComputed$<Partial<{ id: string; altText: string }>[]>(
+		() => (data.value.note.images.length ? data.value.note.images : [{}]),
+	);
+
 	return (
 		<div>
 			<Form
@@ -178,12 +187,22 @@ export default component$(() => {
 					</div>
 					<div>
 						<Label>Images</Label>
-						<ImagePicker
-							image={data.value.note.images[0]}
-							imageFieldname='imageFile'
-							imageIdFieldname='imageId'
-							altTextFieldname='altText'
-						/>
+						<ul class='flex flex-col gap-4'>
+							{imageList.value.map((image, index) => (
+								<li key={image?.id} class='relative'>
+									<button class='absolute right-0 top-0 text-foreground-destructive'>
+										<span aria-hidden>❌</span>{' '}
+										<span class='sr-only'>Remove image {index + 1}</span>
+									</button>
+									<ImagePicker
+										image={data.value.note.images[0]}
+										imageFieldname='imageFile'
+										imageIdFieldname='imageId'
+										altTextFieldname='altText'
+									/>
+								</li>
+							))}
+						</ul>
 					</div>
 					<Button class='mt-3'>
 						<span aria-hidden>➕ Image</span>{' '}

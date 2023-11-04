@@ -21,6 +21,35 @@ const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const TITLE_MAX_LENGTH = 100;
 const CONTENT_MAX_LENGTH = 10000;
 
+const ImageFieldsetSchema = z.object({
+	id: z.string().optional(),
+	imageFile: z
+		.any()
+		.refine((file) => file.size <= MAX_UPLOAD_SIZE)
+		.optional(),
+	altText: z.string().optional(),
+});
+
+const NoteEditorSchema = z.object({
+	title: z
+		.string()
+		.trim()
+		.min(1, 'Title is required')
+		.max(
+			TITLE_MAX_LENGTH,
+			`Title must be at most ${TITLE_MAX_LENGTH} characters`,
+		),
+	content: z
+		.string()
+		.trim()
+		.min(1, 'Content is required')
+		.max(
+			CONTENT_MAX_LENGTH,
+			`Content must be at most ${CONTENT_MAX_LENGTH} characters`,
+		),
+	images: z.array(ImageFieldsetSchema),
+});
+
 export const useNote = routeLoader$(async ({ params, error }) => {
 	const note = kodyNotes.find((note) => note.id === params.noteId);
 
@@ -38,38 +67,15 @@ export const useNote = routeLoader$(async ({ params, error }) => {
 });
 
 export const useEditNote = routeAction$(
-	async (
-		{ title, content, imageFile, imageId, altText },
-		{ params, redirect },
-	) => {
-		console.log('File', imageFile?.size);
-		console.log({ title, content, imageId, altText });
+	async ({ title, content, images }, { params, redirect }) => {
+		console.log(
+			'File',
+			images.reduce((acc, current) => acc + (current.imageFile?.size ?? 0), 0),
+		);
+		console.log({ title, content });
 		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
 	},
-	zod$({
-		title: z
-			.string()
-			.trim()
-			.min(1, 'Title is required')
-			.max(
-				TITLE_MAX_LENGTH,
-				`Title must be at most ${TITLE_MAX_LENGTH} characters`,
-			),
-		content: z
-			.string()
-			.trim()
-			.min(1, 'Content is required')
-			.max(
-				CONTENT_MAX_LENGTH,
-				`Content must be at most ${CONTENT_MAX_LENGTH} characters`,
-			),
-		imageId: z.string().optional(),
-		imageFile: z
-			.any()
-			.refine((file) => file.size <= MAX_UPLOAD_SIZE)
-			.optional(),
-		altText: z.string().optional(),
-	}),
+	zod$(NoteEditorSchema),
 );
 
 export default component$(() => {
@@ -110,6 +116,7 @@ export default component$(() => {
 				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
 				encType='multipart/form-data'
 			>
+				<button type='submit' class='hidden' />
 				<div class='flex flex-col gap-1'>
 					<div>
 						<Label for='note-title'>Title</Label>
@@ -170,7 +177,7 @@ export default component$(() => {
 						</div>
 					</div>
 					<div>
-						<Label>Image</Label>
+						<Label>Images</Label>
 						<ImagePicker
 							image={data.value.note.images[0]}
 							imageFieldname='imageFile'
@@ -178,6 +185,10 @@ export default component$(() => {
 							altTextFieldname='altText'
 						/>
 					</div>
+					<Button class='mt-3'>
+						<span aria-hidden>➕ Image</span>{' '}
+						<span class='sr-only'>Add image</span>
+					</Button>
 				</div>
 				<ErrorList
 					id={editNote.value?.formErrors?.length ? 'form-error' : undefined}

@@ -37,8 +37,12 @@ export const useNote = routeLoader$(async ({ params, error }) => {
 });
 
 export const useEditNote = routeAction$(
-	async ({ title, content, file, imageId, altText }, { params, redirect }) => {
-		console.log('File', file?.size);
+	async (
+		{ title, content, imageFile, imageId, altText },
+		{ params, redirect },
+	) => {
+		console.log('File', imageFile?.size);
+		console.log({ title, content, imageId, altText });
 		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
 	},
 	zod$({
@@ -59,7 +63,7 @@ export const useEditNote = routeAction$(
 				`Content must be at most ${CONTENT_MAX_LENGTH} characters`,
 			),
 		imageId: z.string().optional(),
-		file: z
+		imageFile: z
 			.custom<File>((file) => file instanceof File)
 			.refine((file) => file.size <= MAX_UPLOAD_SIZE)
 			.optional(),
@@ -178,7 +182,12 @@ export default component$(() => {
 					</div>
 					<div>
 						<Label>Image</Label>
-						<ImagePicker image={data.value.note.images[0]} />
+						<ImagePicker
+							image={data.value.note.images[0]}
+							imageFieldname='imageFile'
+							imageIdFieldname='imageId'
+							altTextFieldname='altText'
+						/>
 					</div>
 				</div>
 				<ErrorList

@@ -1,4 +1,3 @@
-import { Button, Input, Label } from '@/components/ui';
 import { component$ } from '@builder.io/qwik';
 import {
 	Form,
@@ -7,6 +6,8 @@ import {
 	zod$,
 	z,
 } from '@builder.io/qwik-city';
+import { Button, HoneypotInput, Input, Label } from '@/components/ui';
+import { checkHoneypot } from '@/utils/misc';
 
 export const head: DocumentHead = () => {
 	return {
@@ -16,9 +17,7 @@ export const head: DocumentHead = () => {
 
 export const useSignup = routeAction$(
 	({ name, email }, { redirect }) => {
-		if (name) {
-			throw new Response('Form not submitted properly', { status: 400 });
-		}
+		checkHoneypot(name);
 
 		redirect(302, '/');
 	},
@@ -44,10 +43,7 @@ export default component$(() => {
 					action={signup}
 					class='mx-auto flex min-w-[368px] max-w-sm flex-col gap-4'
 				>
-					<div class='hidden' aria-hidden>
-						<label for='name-input'>Please leave this field blank</label>
-						<input id='name-input' name='name' type='text' />
-					</div>
+					<HoneypotInput fieldName='name' />
 					<div>
 						<Label for='email-input'>Email</Label>
 						<Input

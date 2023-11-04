@@ -13,6 +13,7 @@ import {
 	Input,
 	Textarea,
 	StatusButton,
+	ErrorList,
 } from '@/components/ui';
 import { kodyNotes } from '@/db/db.server';
 
@@ -70,18 +71,6 @@ export const useEditNote = routeAction$(
 		altText: z.string().optional(),
 	}),
 );
-
-function ErrorList({ id, errors }: { id?: string; errors?: string[] | null }) {
-	return errors?.length ? (
-		<ul id={id} class='flex flex-col gap-1'>
-			{errors.map((error, i) => (
-				<li key={i} class='text-[10px] text-foreground-destructive'>
-					{error}
-				</li>
-			))}
-		</ul>
-	) : null;
-}
 
 export default component$(() => {
 	const data = useNote();

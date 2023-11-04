@@ -64,7 +64,7 @@ export const useEditNote = routeAction$(
 			),
 		imageId: z.string().optional(),
 		imageFile: z
-			.custom<File>((file) => file instanceof File)
+			.any()
 			.refine((file) => file.size <= MAX_UPLOAD_SIZE)
 			.optional(),
 		altText: z.string().optional(),

@@ -1,3 +1,4 @@
+import SearchBar from '@/components/fields/search-bar';
 import { component$, Slot } from '@builder.io/qwik';
 import {
 	type DocumentHead,
@@ -9,13 +10,16 @@ export default component$(() => {
 	return (
 		<>
 			<header class='container mx-auto py-6'>
-				<nav class='flex justify-between'>
+				<nav class='flex items-center justify-between gap-6'>
 					<Link href='/'>
 						<div class='font-light'>epic</div>
 						<div class='font-bold'>notes</div>
 					</Link>
-					<Link href='/signup' class='underline'>
-						Signup
+					<div class='ml-auto max-w-sm flex-1'>
+						<SearchBar status='idle' />
+					</div>
+					<Link class='underline' href='/users/kody/notes'>
+						Kody's Notes
 					</Link>
 				</nav>
 			</header>

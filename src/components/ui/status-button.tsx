@@ -3,9 +3,10 @@ import Button, { type ButtonProps } from '@/components/ui/button';
 import { cn } from '@/utils/misc';
 import { Icon } from './icon';
 import useSpinDelay from '@/hooks/spin-delay';
+import type { Status } from '@/types';
 
 interface StatusButtonProps extends ButtonProps {
-	status: 'pending' | 'success' | 'error' | 'idle';
+	status: Status;
 	message?: string | null;
 }
 

@@ -1,5 +1,6 @@
 import { type QwikChangeEvent, component$, useSignal } from '@builder.io/qwik';
-import { ErrorList, Icon, Label, Textarea } from './';
+import { ErrorList, Icon } from './';
+import { TextareaField } from '@/components/fields';
 import { cn } from '@/utils/misc';
 
 interface ImagePickerProps {
@@ -88,15 +89,15 @@ export default component$<ImagePickerProps>(
 						</div>
 					</div>
 					<div class='flex-1'>
-						<Label for='alt-text'>Alt Text</Label>
-						<Textarea
-							id='alt-text'
-							name={altTextFieldname}
-							bind:value={altText}
+						<TextareaField
+							labelProps={{ children: 'Alt Text' }}
+							textareaProps={{
+								id: 'alt-text',
+								name: altTextFieldname,
+								'bind:value': altText,
+							}}
+							errors={[]}
 						/>
-						<div class='min-h-[32px] px-4 pb-3 pt-1'>
-							<ErrorList id='' errors={[]} />
-						</div>
 					</div>
 				</div>
 				<div class='min-h-[32px] px-4 pb-3 pt-1'>

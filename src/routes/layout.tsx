@@ -1,10 +1,10 @@
-import SearchBar from '@/components/fields/search-bar';
 import { component$, Slot } from '@builder.io/qwik';
 import {
 	type DocumentHead,
 	Link,
 	type DocumentMeta,
 } from '@builder.io/qwik-city';
+import { SearchBar } from '@/components/fields';
 
 export default component$(() => {
 	return (

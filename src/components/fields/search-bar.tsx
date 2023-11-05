@@ -1,4 +1,4 @@
-import { component$, useId } from '@builder.io/qwik';
+import { $, component$, useId } from '@builder.io/qwik';
 import type { Status } from '@/types';
 import { Form } from '@builder.io/qwik-city';
 import { Icon, Input, Label, StatusButton } from '../ui';
@@ -13,8 +13,13 @@ export default component$<SearchBarProps>(
 	({ status, autoFocus = false, autoSubmit = false }) => {
 		const id = useId();
 
+		const handleSubmit = $(() => {});
+
 		return (
-			<Form class='flex flex-wrap items-center justify-center gap-2'>
+			<Form
+				class='flex flex-wrap items-center justify-center gap-2'
+				onSubmit$={handleSubmit}
+			>
 				<div class='flex-1'>
 					<Label for={id} class='sr-only'>
 						Search

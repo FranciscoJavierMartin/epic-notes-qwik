@@ -1,6 +1,6 @@
 import { component$ } from '@builder.io/qwik';
 
-type ListOfErrors = Array<string | null | undefined> | null | undefined;
+export type ListOfErrors = Array<string | null | undefined> | null | undefined;
 
 interface ErrorListProps {
 	id?: string;

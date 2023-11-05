@@ -17,6 +17,7 @@ import {
 	ImagePicker,
 	StatusButton,
 	ErrorList,
+	Icon,
 } from '@/components/ui';
 import { TextareaField, InputField } from '@/components/fields';
 import { kodyNotes } from '@/db/db.server';
@@ -170,7 +171,9 @@ export default component$(() => {
 									class='relative border-b-2 border-muted-foreground pb-4'
 								>
 									<button class='absolute right-0 top-0 text-foreground-destructive'>
-										<span aria-hidden>❌</span>{' '}
+										<span aria-hidden>
+											<Icon name='cross-1' />
+										</span>{' '}
 										<span class='sr-only'>Remove image {index + 1}</span>
 									</button>
 									<ImagePicker
@@ -184,7 +187,10 @@ export default component$(() => {
 						</ul>
 					</div>
 					<Button class='mt-3'>
-						<span aria-hidden>➕ Image</span>{' '}
+						<span aria-hidden>
+							<Icon name='plus' />
+							Image
+						</span>{' '}
 						<span class='sr-only'>Add image</span>
 					</Button>
 				</div>

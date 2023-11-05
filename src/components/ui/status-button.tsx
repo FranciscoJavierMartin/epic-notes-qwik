@@ -2,6 +2,7 @@ import { Slot, component$ } from '@builder.io/qwik';
 import Button, { type ButtonProps } from '@/components/ui/button';
 import { cn } from '@/utils/misc';
 import { Icon } from './icon';
+import useSpinDelay from '@/hooks/spin-delay';
 
 interface StatusButtonProps extends ButtonProps {
 	status: 'pending' | 'success' | 'error' | 'idle';
@@ -10,8 +11,14 @@ interface StatusButtonProps extends ButtonProps {
 
 export default component$<StatusButtonProps>(
 	({ status, class: className, ...props }) => {
+		const delayedPending = useSpinDelay(status === 'pending', {
+			delay: 400,
+			minDuration: 300,
+			...props,
+		});
+
 		const companion = {
-			pending: true ? (
+			pending: delayedPending ? (
 				<div class='inline-flex h-6 w-6 items-center justify-center'>
 					<Icon name='update' class='animate-spin' />
 				</div>

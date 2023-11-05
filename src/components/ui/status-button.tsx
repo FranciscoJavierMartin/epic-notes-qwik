@@ -36,6 +36,7 @@ export default component$<StatusButtonProps>(
 			idle: null,
 		}[status];
 
+		// TODO: Add tooltip
 		return (
 			<Button class={cn('flex justify-center gap-4', className)} {...props}>
 				<div>

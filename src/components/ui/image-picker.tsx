@@ -1,6 +1,6 @@
 import { type QwikChangeEvent, component$, useSignal } from '@builder.io/qwik';
+import { ErrorList, Icon, Label, Textarea } from './';
 import { cn } from '@/utils/misc';
-import { Label, Textarea } from './';
 
 interface ImagePickerProps {
 	image?: { id: string; altText?: string | null };
@@ -9,6 +9,7 @@ interface ImagePickerProps {
 	imageIdFieldname: string;
 }
 
+// TODO: Add errors id
 export default component$<ImagePickerProps>(
 	({ image, altTextFieldname, imageFieldname, imageIdFieldname }) => {
 		const existingImage = Boolean(image);
@@ -47,7 +48,7 @@ export default component$<ImagePickerProps>(
 									</div>
 								) : (
 									<div class='flex h-32 w-32 items-center justify-center rounded-lg border border-muted-foreground text-4xl text-muted-foreground'>
-										➕
+										<Icon name='plus' />
 									</div>
 								)}
 								{existingImage ? (
@@ -82,6 +83,9 @@ export default component$<ImagePickerProps>(
 								/>
 							</label>
 						</div>
+						<div class='min-h-[32px] px-4 pb-3 pt-1'>
+							<ErrorList id='' errors={[]} />
+						</div>
 					</div>
 					<div class='flex-1'>
 						<Label for='alt-text'>Alt Text</Label>
@@ -90,7 +94,13 @@ export default component$<ImagePickerProps>(
 							name={altTextFieldname}
 							bind:value={altText}
 						/>
+						<div class='min-h-[32px] px-4 pb-3 pt-1'>
+							<ErrorList id='' errors={[]} />
+						</div>
 					</div>
+				</div>
+				<div class='min-h-[32px] px-4 pb-3 pt-1'>
+					<ErrorList id='' errors={[]} />
 				</div>
 			</fieldset>
 		);

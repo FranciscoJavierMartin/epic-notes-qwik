@@ -3,10 +3,13 @@ import {
 	type DocumentHead,
 	Link,
 	type DocumentMeta,
+	useLocation,
 } from '@builder.io/qwik-city';
 import { SearchBar } from '@/components/fields';
 
 export default component$(() => {
+	const location = useLocation();
+
 	return (
 		<>
 			<header class='container mx-auto py-6'>
@@ -15,9 +18,11 @@ export default component$(() => {
 						<div class='font-light'>epic</div>
 						<div class='font-bold'>notes</div>
 					</Link>
-					<div class='ml-auto max-w-sm flex-1'>
-						<SearchBar status='idle' />
-					</div>
+					{location.url.pathname === '/users/' ? null : (
+						<div class='ml-auto max-w-sm flex-1'>
+							<SearchBar status='idle' />
+						</div>
+					)}
 					<Link class='underline' href='/users/kody/notes'>
 						Kody's Notes
 					</Link>

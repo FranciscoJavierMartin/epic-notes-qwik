@@ -14,6 +14,9 @@ dependencies:
   clsx:
     specifier: ^2.0.0
     version: 2.0.0
+  enforce-unique:
+    specifier: ^1.2.0
+    version: 1.2.0
   prisma:
     specifier: ^5.5.2
     version: 5.5.2
@@ -1404,6 +1407,10 @@ packages:
     dependencies:
       once: 1.4.0
     dev: true
+
+  /enforce-unique@1.2.0:
+    resolution: {integrity: sha512-ZBusLJB8QQhKMGNOlwARgov+s38rwPbhcifGlhEHqnGHcA8CCSEgbLujdABtpWwZyYnude4t5fviuEmSuV8Hig==}
+    dev: false
 
   /entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}

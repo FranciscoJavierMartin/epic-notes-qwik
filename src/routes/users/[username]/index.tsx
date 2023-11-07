@@ -5,10 +5,10 @@ import {
 	routeLoader$,
 	useLocation,
 } from '@builder.io/qwik-city';
-import userAvatar from '@/assets/user.png';
 import Spacer from '@/components/ui/spacer';
 import { Button } from '@/components/ui';
 import { prisma } from '@/db/db.server';
+import { getUserImgSrc } from '@/utils/misc';
 
 export const useUserProfile = routeLoader$(async ({ params, error }) => {
 	const user = await prisma.user.findFirst({
@@ -44,7 +44,7 @@ export default component$(() => {
 					<div class='absolute -top-40'>
 						<div class='relative'>
 							<img
-								src={data.value.user.image}
+								src={getUserImgSrc(data.value.user.image?.id)}
 								alt={userDisplayName}
 								width={208}
 								height={208}

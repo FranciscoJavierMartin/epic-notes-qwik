@@ -94,7 +94,7 @@ export default component$<ImagePickerProps>(
 							textareaProps={{
 								id: 'alt-text',
 								name: altTextFieldname,
-								'bind:value': altText,
+								value: altText.value,
 							}}
 							errors={[]}
 						/>

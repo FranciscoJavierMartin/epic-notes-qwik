@@ -40,13 +40,13 @@ type ImageFieldset = z.infer<typeof ImageFieldsetSchema>;
 function imageHasFile(
 	image: ImageFieldset,
 ): image is ImageFieldset & { file: NonNullable<ImageFieldset['imageFile']> } {
-	return Boolean(image.imageFile?.size && image.imageFile.size > 0);
+	return Boolean(image.imageFile?.size && image.imageFile?.size > 0);
 }
 
 function imageHasId(
 	image: ImageFieldset,
 ): image is ImageFieldset & { id: NonNullable<ImageFieldset['id']> } {
-	return image.id !== null;
+	return !!image.id;
 }
 
 const NoteEditorSchema = z.object({

@@ -20,7 +20,7 @@ import {
 	Icon,
 } from '@/components/ui';
 import { TextareaField, InputField } from '@/components/fields';
-import { kodyNotes } from '@/db/db.server';
+import { prisma } from '@/db/db.server';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const TITLE_MAX_LENGTH = 100;
@@ -34,6 +34,20 @@ const ImageFieldsetSchema = z.object({
 		.optional(),
 	altText: z.string().optional(),
 });
+
+type ImageFieldset = z.infer<typeof ImageFieldsetSchema>;
+
+function imageHasFile(
+	image: ImageFieldset,
+): image is ImageFieldset & { file: NonNullable<ImageFieldset['imageFile']> } {
+	return Boolean(image.imageFile?.size && image.imageFile.size > 0);
+}
+
+function imageHasId(
+	image: ImageFieldset,
+): image is ImageFieldset & { id: NonNullable<ImageFieldset['id']> } {
+	return image.id !== null;
+}
 
 const NoteEditorSchema = z.object({
 	title: z
@@ -56,19 +70,22 @@ const NoteEditorSchema = z.object({
 });
 
 export const useNote = routeLoader$(async ({ params, error }) => {
-	const note = kodyNotes.find((note) => note.id === params.noteId);
+	const note = await prisma.note.findFirst({
+		where: { id: params.noteId },
+		select: {
+			title: true,
+			content: true,
+			images: {
+				select: { id: true, altText: true },
+			},
+		},
+	});
 
 	if (!note) {
 		throw error(404, 'Note not found');
 	}
 
-	return {
-		note: {
-			title: note.title,
-			content: note.content,
-			images: [] as { id: string; altText: string }[],
-		},
-	};
+	return { note };
 });
 
 export const useEditNote = routeAction$(

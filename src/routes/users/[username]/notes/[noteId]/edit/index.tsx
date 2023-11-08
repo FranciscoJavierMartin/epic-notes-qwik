@@ -124,7 +124,9 @@ export default component$(() => {
 		}
 	});
 
-	const imageList = useComputed$<Partial<{ id: string; altText: string }>[]>(
+	console.log(data.value.note.images);
+
+	const imageList = useComputed$<{ id: string; altText?: string | null }[]>(
 		() => (data.value.note.images.length ? data.value.note.images : [{}]),
 	);
 
@@ -194,7 +196,7 @@ export default component$(() => {
 										<span class='sr-only'>Remove image {index + 1}</span>
 									</button>
 									<ImagePicker
-										image={data.value.note.images[0]}
+										image={image}
 										imageFieldname='imageFile'
 										imageIdFieldname='imageId'
 										altTextFieldname='altText'

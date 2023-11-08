@@ -1,7 +1,7 @@
 import { type QwikChangeEvent, component$, useSignal } from '@builder.io/qwik';
 import { ErrorList, Icon } from './';
 import { TextareaField } from '@/components/fields';
-import { cn } from '@/utils/misc';
+import { cn, getNoteImgSrc } from '@/utils/misc';
 
 interface ImagePickerProps {
 	image?: { id: string; altText?: string | null };
@@ -15,7 +15,7 @@ export default component$<ImagePickerProps>(
 	({ image, altTextFieldname, imageFieldname, imageIdFieldname }) => {
 		const existingImage = Boolean(image);
 		const previewImage = useSignal<string | null>(
-			existingImage ? `/api/images/${image?.id}` : null,
+			existingImage ? getNoteImgSrc(image!.id) : null,
 		);
 		const altText = useSignal<string>(image?.altText ?? '');
 

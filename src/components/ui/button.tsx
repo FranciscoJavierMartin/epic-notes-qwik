@@ -43,6 +43,7 @@ export default component$<ButtonProps>(
 	({ class: className, variant, size, asChild = false, ...props }) => {
 		const Component = asChild ? Slot : 'button';
 
+		// FIXME: How to add styles
 		return (
 			<Component
 				class={cn(buttonVariants({ variant, size, className }))}

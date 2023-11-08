@@ -10,7 +10,8 @@ import {
 } from '@builder.io/qwik-city';
 import { Button } from '@/components/ui';
 import { useOwnerNotes } from '../layout';
-import { kodyNotes } from '@/db/db.server';
+import { prisma } from '@/db/db.server';
+import { getNoteImgSrc } from '@/utils/misc';
 
 export const head: DocumentHead = ({ resolveValue, params }) => {
 	const data = resolveValue(useOwnerNotes);
@@ -35,24 +36,30 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
 };
 
 export const useNote = routeLoader$(async ({ params, error }) => {
-	const note = kodyNotes.find((note) => note.id === params.noteId);
+	const note = await prisma.note.findFirst({
+		select: {
+			title: true,
+			content: true,
+			images: {
+				select: { id: true, altText: true },
+			},
+		},
+		where: {
+			id: params.noteId,
+		},
+	});
 
 	if (!note) {
 		throw error(404, 'Note not found');
 	}
 
-	return {
-		note: {
-			title: note.title,
-			content: note.content,
-			images: [] as { id: string; altText: string }[],
-		},
-	};
+	return { note };
 });
 
 export const useRemoveNote = routeAction$(
-	async ({ intent }, { params, redirect }) => {
-		redirect(302, `/users/${params.username}/notes/`);
+	async (_data, { params, redirect }) => {
+		await prisma.note.delete({ where: { id: params.noteId } });
+		throw redirect(302, `/users/${params.username}/notes/`);
 	},
 	zod$({
 		intent: z.enum(['delete']),
@@ -70,9 +77,9 @@ export default component$(() => {
 				<ul class='flex flex-wrap gap-5 py-5'>
 					{data.value.note.images.map((image) => (
 						<li key={image.id}>
-							<a href={`/api/images/${image.id}`}>
+							<a href={getNoteImgSrc(image.id)}>
 								<img
-									src={`/api/images/${image.id}`}
+									src={getNoteImgSrc(image.id)}
 									alt={image.altText ?? ''}
 									class='h-32 w-32 rounded-lg object-cover'
 									width={128}

@@ -9,7 +9,7 @@ export const useOwnerNotes = routeLoader$(
 		const searchTerm = query.get('search');
 
 		if (searchTerm === '') {
-			redirect(302, '/users');
+			throw redirect(302, '/users');
 		}
 
 		return {

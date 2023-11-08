@@ -18,7 +18,6 @@ export const head: DocumentHead = () => {
 export const useSignup = routeAction$(
 	({ name, email }, { redirect }) => {
 		checkHoneypot(name);
-
 		redirect(302, '/');
 	},
 	zod$({

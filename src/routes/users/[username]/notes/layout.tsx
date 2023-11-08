@@ -1,45 +1,26 @@
 import { Slot, component$ } from '@builder.io/qwik';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
 import { cn } from '@/utils/misc';
-import { db, kodyNotes } from '@/db/db.server';
+import { prisma } from '@/db/db.server';
 import userAvatar from '@/assets/user.png';
 
 export const useOwnerNotes = routeLoader$(async ({ params, error }) => {
-	// const owner = db.user.findFirst({
-	// 	where: {
-	// 		username: {
-	// 			equals: params.username,
-	// 		},
-	// 	},
-	// });
+	const owner = await prisma.user.findFirst({
+		select: {
+			name: true,
+			username: true,
+			image: { select: { id: true } },
+			notes: { select: { id: true, title: true } },
+		},
+		where: {
+			username: params.username,
+		},
+	});
 
-	// if (!owner) {
-	// 	throw error(404, 'Owner not found');
-	// }
-
-	// const notes = db.note
-	// 	.findMany({
-	// 		where: {
-	// 			owner: {
-	// 				username: {
-	// 					equals: params.username,
-	// 				},
-	// 			},
-	// 		},
-	// 	})
-	// 	.map(({ id, title }) => ({ id, title }));
-
-	const owner = {
-		id: '9d6eba59daa2fc2078cf8205cd451041',
-		email: 'kody@kcd.dev',
-		username: 'kody',
-		name: 'Kody',
-		createdAt: new Date('2023-10-30T22:27:04.762Z'),
-	};
-
-	const notes = kodyNotes.map(({ id, title }) => ({ id, title }));
-
-	return { owner, notes };
+	if (!owner) {
+		throw error(404, 'Owner not found');
+	}
+	return { owner };
 });
 
 export default component$(() => {
@@ -69,7 +50,7 @@ export default component$(() => {
 							</h1>
 						</Link>
 						<ul class='overflow-y-auto overflow-x-hidden pb-12'>
-							{data.value.notes.map((note) => (
+							{data.value.owner.notes.map((note) => (
 								<li key={note.id} class='p-1 pr-0'>
 									{/* FIXME: Fix current link */}
 									<Link

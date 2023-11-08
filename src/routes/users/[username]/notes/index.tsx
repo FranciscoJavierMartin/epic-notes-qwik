@@ -6,7 +6,7 @@ export const head: DocumentHead = ({ resolveValue, params }) => {
 	const data = resolveValue(useOwnerNotes);
 
 	const displayName = data.owner.name ?? params.username;
-	const noteCount = data.notes.length ?? 0;
+	const noteCount = data.owner.notes.length ?? 0;
 	const notesText = noteCount === 1 ? 'note' : 'notes';
 
 	return {

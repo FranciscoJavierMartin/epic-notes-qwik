@@ -1,36 +1,34 @@
 import {
-	type InputHTMLAttributes,
-	type LabelHTMLAttributes,
 	component$,
 	useId,
+	type InputHTMLAttributes,
+	type LabelHTMLAttributes,
 } from '@builder.io/qwik';
-import { type ListOfErrors } from '@/components/ui/error-list';
-import { ErrorList, Input, Label } from '../ui';
+import { ErrorList, Input, Label } from '@/components/ui';
 
-interface InputFieldProps {
+interface InputFormProps
+	extends Omit<InputHTMLAttributes<HTMLInputElement>, 'children'> {
+	error: string;
 	labelProps: LabelHTMLAttributes<HTMLLabelElement>;
-	inputProps: InputHTMLAttributes<HTMLInputElement>;
-	errors?: ListOfErrors;
-	class?: string;
 }
 
-export default component$<InputFieldProps>(
-	({ labelProps, inputProps, errors, class: className }) => {
+export default component$<InputFormProps>(
+	({ error, labelProps, class: className, ...props }) => {
 		const fallbackId = useId();
-		const id = inputProps.id ?? fallbackId;
-		const errorId = errors?.length ? `${id}-error` : undefined;
+		const id = props.id ?? fallbackId;
+		const errorId = error ? `${id}-error` : undefined;
 
 		return (
 			<div class={className}>
 				<Label for={id} {...labelProps} />
 				<Input
+					{...props}
 					id={id}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
-					{...inputProps}
 				/>
 				<div class='min-h-[32px] px-4 pb-3 pt-1'>
-					{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+					{errorId && <ErrorList id={errorId} errors={[error]} />}
 				</div>
 			</div>
 		);

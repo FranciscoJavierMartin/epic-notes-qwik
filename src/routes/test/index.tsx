@@ -7,9 +7,9 @@ import {
 	formAction$,
 	zodForm$,
 } from '@modular-forms/qwik';
-import InputForm from '@/components/form/input-form';
 import { prisma } from '@/db/db.server';
 import { Button, StatusButton } from '@/components/ui';
+import { InputField } from '@/components/fields';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const TITLE_MIN_LENGTH = 1;
@@ -94,7 +94,7 @@ export default component$(() => {
 				<div class='flex flex-col gap-1'>
 					<Field name='title'>
 						{(field, props) => (
-							<InputForm
+							<InputField
 								{...props}
 								labelProps={{ children: 'Title' }}
 								error={field.error}

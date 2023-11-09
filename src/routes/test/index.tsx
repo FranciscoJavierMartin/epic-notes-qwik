@@ -1,3 +1,4 @@
+import InputForm from '@/components/form/input-form';
 import { prisma } from '@/db/db.server';
 import { $, component$ } from '@builder.io/qwik';
 import { routeLoader$, z } from '@builder.io/qwik-city';
@@ -57,16 +58,12 @@ export default component$(() => {
 		<Form class='flex w-52 flex-col' onSubmit$={handleSubmit}>
 			<Field name='email'>
 				{(field, props) => (
-					<div class='flex flex-col'>
-						<input
-							{...props}
-							type='email'
-							value={field.value}
-							placeholder='Email'
-							class='border border-black'
-						/>
-						{field.error && <div class='text-red-600'>{field.error}</div>}
-					</div>
+					<InputForm
+						value={field.value}
+						error={field.error}
+						placeholder='Email'
+						{...props}
+					/>
 				)}
 			</Field>
 			<Field name='password'>

@@ -2,25 +2,25 @@ import {
 	component$,
 	useId,
 	type InputHTMLAttributes,
-	type JSXChildren,
+	type LabelHTMLAttributes,
 } from '@builder.io/qwik';
 import { ErrorList, Input, Label } from '@/components/ui';
 
 interface InputFormProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, 'children'> {
 	error: string;
-	label: JSXChildren;
+	labelProps: LabelHTMLAttributes<HTMLLabelElement>;
 }
 
 export default component$<InputFormProps>(
-	({ error, label, class: className, ...props }) => {
+	({ error, labelProps, class: className, ...props }) => {
 		const fallbackId = useId();
 		const id = props.id ?? fallbackId;
 		const errorId = error ? `${id}-error` : undefined;
 
 		return (
 			<div class={className}>
-				<Label for={id}>{label}</Label>
+				<Label for={id} {...labelProps} />
 				<Input
 					{...props}
 					id={id}

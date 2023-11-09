@@ -96,7 +96,7 @@ export default component$(() => {
 						{(field, props) => (
 							<InputForm
 								{...props}
-								label='Title'
+								labelProps={{ children: 'Title' }}
 								error={field.error}
 								autoFocus
 								id='note-title'

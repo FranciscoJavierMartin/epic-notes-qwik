@@ -50,18 +50,22 @@ type EditNoteForm = typeof NoteEditorSchema._type;
 
 export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 	async ({ params, error }) => {
-		const user = await prisma.user.findFirst({
+		const note = await prisma.note.findFirst({
 			select: {
-				email: true,
+				title: true,
+				content: true,
 			},
 			where: {
-				username: 'kody',
+				id: 'd27a197e',
 			},
 		});
 
+		if (!note) {
+			throw error(404, 'Note not found');
+		}
+
 		return {
-			title: '',
-			content: '',
+			...note,
 		};
 	},
 );

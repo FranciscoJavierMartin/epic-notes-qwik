@@ -9,6 +9,7 @@ import {
 } from '@modular-forms/qwik';
 import InputForm from '@/components/form/input-form';
 import { prisma } from '@/db/db.server';
+import { Button, StatusButton } from '@/components/ui';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const TITLE_MIN_LENGTH = 1;
@@ -70,8 +71,7 @@ export const useFormAction = formAction$<EditNoteForm>((values) => {
 }, zodForm$(NoteEditorSchema));
 
 export default component$(() => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [_editNoteForm, { Form, Field }] = useForm<EditNoteForm>({
+	const [editNoteForm, { Form, Field }] = useForm<EditNoteForm>({
 		loader: useFormLoader(),
 		action: useFormAction(),
 		validate: zodForm$(NoteEditorSchema),
@@ -80,34 +80,52 @@ export default component$(() => {
 	const handleSubmit = $<SubmitHandler<EditNoteForm>>(() => {});
 
 	return (
-		<Form class='flex w-52 flex-col' onSubmit$={handleSubmit}>
-			<Field name='title'>
-				{(field, props) => (
-					<InputForm
-						value={field.value}
-						error={field.error}
-						placeholder='Title'
-						{...props}
-					/>
-				)}
-			</Field>
-			<Field name='content'>
-				{(field, props) => (
-					<div class='flex flex-col'>
-						<input
-							{...props}
-							type='text'
-							value={field.value}
-							placeholder='Content'
-							class='border border-black '
-						/>
-						{field.error && <div class='text-red-600'>{field.error}</div>}
-					</div>
-				)}
-			</Field>
-			<button type='submit' class='bg-blue-600 text-white'>
-				Edit
-			</button>
-		</Form>
+		<div>
+			<Form
+				onSubmit$={handleSubmit}
+				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
+				encType='multipart/form-data'
+			>
+				<div class='flex flex-col gap-1'>
+					<Field name='title'>
+						{(field, props) => (
+							<InputForm
+								value={field.value}
+								error={field.error}
+								placeholder='Title'
+								{...props}
+							/>
+						)}
+					</Field>
+					<Field name='content'>
+						{(field, props) => (
+							<div class='flex flex-col'>
+								<input
+									{...props}
+									type='text'
+									value={field.value}
+									placeholder='Content'
+									class='border border-black '
+								/>
+								{field.error && <div class='text-red-600'>{field.error}</div>}
+							</div>
+						)}
+					</Field>
+				</div>
+			</Form>
+			<div class='floating-toolbar'>
+				<Button form='note-editor' variant='destructive' type='reset'>
+					Reset
+				</Button>
+				<StatusButton
+					form='note-editor'
+					type='submit'
+					disabled={editNoteForm.invalid}
+					status={editNoteForm.submitting ? 'pending' : 'idle'}
+				>
+					Submit
+				</StatusButton>
+			</div>
+		</div>
 	);
 });

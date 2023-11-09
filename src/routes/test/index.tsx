@@ -6,9 +6,10 @@ import {
 	type SubmitHandler,
 	formAction$,
 	zodForm$,
+	remove,
 } from '@modular-forms/qwik';
 import { prisma } from '@/db/db.server';
-import { Button, Label, StatusButton } from '@/components/ui';
+import { Button, Icon, Label, StatusButton } from '@/components/ui';
 import { InputField, TextareaField } from '@/components/fields';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
@@ -79,10 +80,11 @@ export const useFormAction = formAction$<EditNoteForm>((values) => {
 }, zodForm$(NoteEditorSchema));
 
 export default component$(() => {
-	const [editNoteForm, { Form, Field }] = useForm<EditNoteForm>({
+	const [editNoteForm, { Form, Field, FieldArray }] = useForm<EditNoteForm>({
 		loader: useFormLoader(),
 		action: useFormAction(),
 		validate: zodForm$(NoteEditorSchema),
+		fieldArrays: ['images'],
 	});
 
 	const handleSubmit = $<SubmitHandler<EditNoteForm>>(() => {});
@@ -125,10 +127,33 @@ export default component$(() => {
 							/>
 						)}
 					</Field>
-					<div>
-						<Label>Images</Label>
-						<ul class='flex flex-col gap-4'></ul>
-					</div>
+					<FieldArray name='images'>
+						{(imageList) => (
+							<div>
+								<Label>Images</Label>
+								<ul class='flex flex-col gap-4'>
+									{imageList.items.map((image, index) => (
+										<li
+											key={image}
+											class='relative border-b-2 border-muted-foreground pb-4'
+										>
+											<button
+												class='absolute right-0 top-0 text-foreground-destructive'
+												onClick$={$(() =>
+													remove(editNoteForm, 'images', { at: index }),
+												)}
+											>
+												<span aria-hidden>
+													<Icon name='cross-1' />
+												</span>{' '}
+												<span class='sr-only'>Remove image {index + 1}</span>
+											</button>
+										</li>
+									))}
+								</ul>
+							</div>
+						)}
+					</FieldArray>
 				</div>
 			</Form>
 			<div class='floating-toolbar'>

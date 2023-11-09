@@ -1,3 +1,4 @@
+import { prisma } from '@/db/db.server';
 import { $, component$ } from '@builder.io/qwik';
 import { routeLoader$, z } from '@builder.io/qwik-city';
 import {
@@ -19,10 +20,23 @@ const LoginSchemaZod = z.object({
 
 type LoginForm = typeof LoginSchemaZod._type;
 
-export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(() => ({
-	email: '',
-	password: '',
-}));
+export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(
+	async ({ params, error }) => {
+		const user = await prisma.user.findFirst({
+			select: {
+				email: true,
+			},
+			where: {
+				username: 'kody',
+			},
+		});
+
+		return {
+			email: user?.email ?? '',
+			password: '',
+		};
+	},
+);
 
 export const useFormAction = formAction$<LoginForm>((values) => {
 	console.log(values);

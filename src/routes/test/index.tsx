@@ -7,10 +7,12 @@ import {
 	formAction$,
 	zodForm$,
 	remove,
+	insert,
 } from '@modular-forms/qwik';
 import { prisma } from '@/db/db.server';
 import { Button, Icon, Label, StatusButton } from '@/components/ui';
 import { InputField, TextareaField } from '@/components/fields';
+import ImageChooser from '@/components/form/image-chooser';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const TITLE_MIN_LENGTH = 1;
@@ -148,12 +150,24 @@ export default component$(() => {
 												</span>{' '}
 												<span class='sr-only'>Remove image {index + 1}</span>
 											</button>
+											<ImageChooser />
 										</li>
 									))}
 								</ul>
 							</div>
 						)}
 					</FieldArray>
+					<Button
+						class='mt-3'
+						onClick$={$(() => {
+							insert(editNoteForm, 'images', { value: {} });
+						})}
+					>
+						<span aria-hidden class='flex gap-1'>
+							<Icon name='plus' /> Image
+						</span>{' '}
+						<span class='sr-only'>Add image</span>
+					</Button>
 				</div>
 			</Form>
 			<div class='floating-toolbar'>

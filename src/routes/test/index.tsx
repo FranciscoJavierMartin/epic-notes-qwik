@@ -104,8 +104,6 @@ export default component$(() => {
 								placeholder='Title'
 								required
 								maxLength={TITLE_MAX_LENGTH}
-								aria-invalid={Boolean(field.error) || undefined}
-								aria-describedby={field.error ? 'title-error' : undefined}
 							/>
 						)}
 					</Field>

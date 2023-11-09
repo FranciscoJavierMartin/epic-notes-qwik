@@ -96,11 +96,16 @@ export default component$(() => {
 						{(field, props) => (
 							<InputForm
 								{...props}
+								label='Title'
+								error={field.error}
 								autoFocus
 								id='note-title'
 								value={field.value}
-								error={field.error}
 								placeholder='Title'
+								required
+								maxLength={TITLE_MAX_LENGTH}
+								aria-invalid={Boolean(field.error) || undefined}
+								aria-describedby={field.error ? 'title-error' : undefined}
 							/>
 						)}
 					</Field>

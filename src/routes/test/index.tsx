@@ -1,25 +1,12 @@
 import { $, component$ } from '@builder.io/qwik';
-import { routeLoader$, z, zod$ } from '@builder.io/qwik-city';
+import { routeLoader$, z } from '@builder.io/qwik-city';
 import {
 	useForm,
 	type InitialValues,
 	type SubmitHandler,
-	valiForm$,
 	formAction$,
 	zodForm$,
 } from '@modular-forms/qwik';
-import { type Input, email, minLength, object, string } from 'valibot';
-
-const LoginSchema = object({
-	email: string([
-		minLength(1, 'Please enter your email'),
-		email('Email address is badly formatted'),
-	]),
-	password: string([
-		minLength(1, 'Please enter your password'),
-		minLength(4, 'Your password must have 4 characters or more'),
-	]),
-});
 
 const LoginSchemaZod = z.object({
 	email: z
@@ -30,7 +17,7 @@ const LoginSchemaZod = z.object({
 	password: z.string().trim().min(1, 'Password is required'),
 });
 
-type LoginForm = Input<typeof LoginSchema>;
+type LoginForm = typeof LoginSchemaZod._type;
 
 export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(() => ({
 	email: '',

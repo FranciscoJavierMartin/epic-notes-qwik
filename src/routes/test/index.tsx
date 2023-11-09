@@ -8,7 +8,7 @@ import {
 	zodForm$,
 } from '@modular-forms/qwik';
 import { prisma } from '@/db/db.server';
-import { Button, StatusButton } from '@/components/ui';
+import { Button, Label, StatusButton } from '@/components/ui';
 import { InputField, TextareaField } from '@/components/fields';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
@@ -43,7 +43,7 @@ const NoteEditorSchema = z.object({
 			CONTENT_MAX_LENGTH,
 			`Content must be at most ${CONTENT_MAX_LENGTH} characters`,
 		),
-	// images: z.array(ImageFieldsetSchema).max(5).optional(),
+	images: z.array(ImageFieldsetSchema).max(5).optional(),
 });
 
 type EditNoteForm = typeof NoteEditorSchema._type;
@@ -54,6 +54,12 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 			select: {
 				title: true,
 				content: true,
+				images: {
+					select: {
+						id: true,
+						altText: true,
+					},
+				},
 			},
 			where: {
 				id: 'd27a197e',
@@ -64,9 +70,7 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 			throw error(404, 'Note not found');
 		}
 
-		return {
-			...note,
-		};
+		return note;
 	},
 );
 
@@ -91,6 +95,7 @@ export default component$(() => {
 				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
 				encType='multipart/form-data'
 			>
+				<button type='submit' class='hidden' />
 				<div class='flex flex-col gap-1'>
 					<Field name='title'>
 						{(field, props) => (
@@ -120,6 +125,10 @@ export default component$(() => {
 							/>
 						)}
 					</Field>
+					<div>
+						<Label>Images</Label>
+						<ul class='flex flex-col gap-4'></ul>
+					</div>
 				</div>
 			</Form>
 			<div class='floating-toolbar'>

@@ -1,11 +1,12 @@
 import { $, component$ } from '@builder.io/qwik';
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { routeLoader$, z, zod$ } from '@builder.io/qwik-city';
 import {
 	useForm,
 	type InitialValues,
 	type SubmitHandler,
 	valiForm$,
 	formAction$,
+	zodForm$,
 } from '@modular-forms/qwik';
 import { type Input, email, minLength, object, string } from 'valibot';
 
@@ -20,6 +21,15 @@ const LoginSchema = object({
 	]),
 });
 
+const LoginSchemaZod = z.object({
+	email: z
+		.string()
+		.trim()
+		.min(1, 'Email is required')
+		.email(`Email bad formatted`),
+	password: z.string().trim().min(1, 'Password is required'),
+});
+
 type LoginForm = Input<typeof LoginSchema>;
 
 export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(() => ({
@@ -29,13 +39,13 @@ export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(() => ({
 
 export const useFormAction = formAction$<LoginForm>((values) => {
 	console.log(values);
-}, valiForm$(LoginSchema));
+}, zodForm$(LoginSchemaZod));
 
 export default component$(() => {
 	const [loginForm, { Form, Field, FieldArray }] = useForm<LoginForm>({
 		loader: useFormLoader(),
 		action: useFormAction(),
-		validate: valiForm$(LoginSchema),
+		validate: zodForm$(LoginSchemaZod),
 	});
 
 	const handleSubmit = $<SubmitHandler<LoginForm>>((values, event) => {

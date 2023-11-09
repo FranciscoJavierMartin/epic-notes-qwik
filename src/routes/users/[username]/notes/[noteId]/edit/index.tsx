@@ -23,8 +23,10 @@ import { TextareaField, InputField } from '@/components/fields';
 import { prisma } from '@/db/db.server';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
+const TITLE_MIN_LENGTH = 1;
 const TITLE_MAX_LENGTH = 100;
-const CONTENT_MAX_LENGTH = 10000;
+const CONTENT_MIN_LENGTH = 1;
+const CONTENT_MAX_LENGTH = 10_000;
 
 const ImageFieldsetSchema = z.object({
 	id: z.string().optional(),
@@ -53,7 +55,7 @@ const NoteEditorSchema = z.object({
 	title: z
 		.string()
 		.trim()
-		.min(1, 'Title is required')
+		.min(TITLE_MIN_LENGTH, 'Title is required')
 		.max(
 			TITLE_MAX_LENGTH,
 			`Title must be at most ${TITLE_MAX_LENGTH} characters`,
@@ -61,12 +63,12 @@ const NoteEditorSchema = z.object({
 	content: z
 		.string()
 		.trim()
-		.min(1, 'Content is required')
+		.min(CONTENT_MIN_LENGTH, 'Content is required')
 		.max(
 			CONTENT_MAX_LENGTH,
 			`Content must be at most ${CONTENT_MAX_LENGTH} characters`,
 		),
-	images: z.array(ImageFieldsetSchema),
+	images: z.array(ImageFieldsetSchema).max(5).optional(),
 });
 
 export const useNote = routeLoader$(async ({ params, error }) => {
@@ -90,10 +92,6 @@ export const useNote = routeLoader$(async ({ params, error }) => {
 
 export const useEditNote = routeAction$(
 	async ({ title, content, images }, { params, redirect }) => {
-		console.log(
-			'File',
-			images.reduce((acc, current) => acc + (current.imageFile?.size ?? 0), 0),
-		);
 		console.log({ title, content });
 		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
 	},
@@ -123,8 +121,6 @@ export default component$(() => {
 			}
 		}
 	});
-
-	console.log(data.value.note.images);
 
 	const imageList = useComputed$<{ id: string; altText?: string | null }[]>(
 		() => (data.value.note.images.length ? data.value.note.images : [{}]),

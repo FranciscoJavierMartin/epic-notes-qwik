@@ -147,7 +147,7 @@ export default component$(() => {
 						inputProps={{
 							autoFocus: true,
 							id: 'note-title',
-							name: 'name',
+							name: 'title',
 							value: data.value.note.title,
 							required: true,
 							maxLength: TITLE_MAX_LENGTH,

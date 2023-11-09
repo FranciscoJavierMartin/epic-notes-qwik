@@ -86,6 +86,7 @@ export default component$(() => {
 	return (
 		<div>
 			<Form
+				id='note-editor'
 				onSubmit$={handleSubmit}
 				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
 				encType='multipart/form-data'
@@ -94,10 +95,12 @@ export default component$(() => {
 					<Field name='title'>
 						{(field, props) => (
 							<InputForm
+								{...props}
+								autoFocus
+								id='note-title'
 								value={field.value}
 								error={field.error}
 								placeholder='Title'
-								{...props}
 							/>
 						)}
 					</Field>

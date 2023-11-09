@@ -150,7 +150,22 @@ export default component$(() => {
 												</span>{' '}
 												<span class='sr-only'>Remove image {index + 1}</span>
 											</button>
-											<ImageChooser />
+											<fieldset>
+												<div class='flex gap-3'>
+													<Field name={`images.${index}.altText`}>
+														{(field, props) => (
+															<div class='flex-1'>
+																<TextareaField
+																	{...props}
+																	labelProps={{ children: 'Alt text' }}
+																	error={field.error}
+																	value={field.value}
+																/>
+															</div>
+														)}
+													</Field>
+												</div>
+											</fieldset>
 										</li>
 									))}
 								</ul>

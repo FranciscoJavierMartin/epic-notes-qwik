@@ -6,13 +6,13 @@ import {
 } from '@builder.io/qwik';
 import { ErrorList, Input, Label } from '@/components/ui';
 
-interface InputFormProps
+interface InputFieldProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, 'children'> {
 	error: string;
 	labelProps: LabelHTMLAttributes<HTMLLabelElement>;
 }
 
-export default component$<InputFormProps>(
+export default component$<InputFieldProps>(
 	({ error, labelProps, class: className, ...props }) => {
 		const fallbackId = useId();
 		const id = props.id ?? fallbackId;

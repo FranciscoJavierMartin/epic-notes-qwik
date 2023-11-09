@@ -9,7 +9,7 @@ import {
 } from '@modular-forms/qwik';
 import { prisma } from '@/db/db.server';
 import { Button, StatusButton } from '@/components/ui';
-import { InputField } from '@/components/fields';
+import { InputField, TextareaField } from '@/components/fields';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const TITLE_MIN_LENGTH = 1;
@@ -109,16 +109,15 @@ export default component$(() => {
 					</Field>
 					<Field name='content'>
 						{(field, props) => (
-							<div class='flex flex-col'>
-								<input
-									{...props}
-									type='text'
-									value={field.value}
-									placeholder='Content'
-									class='border border-black '
-								/>
-								{field.error && <div class='text-red-600'>{field.error}</div>}
-							</div>
+							<TextareaField
+								{...props}
+								labelProps={{ children: 'Content' }}
+								error={field.error}
+								id='note-content'
+								value={field.value}
+								required
+								maxLength={CONTENT_MAX_LENGTH}
+							/>
 						)}
 					</Field>
 				</div>

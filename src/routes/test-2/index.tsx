@@ -1,9 +1,11 @@
 import { type NoSerialize, component$ } from '@builder.io/qwik';
 import { formAction$, useForm, valiForm$ } from '@modular-forms/qwik';
-import { type Input, object, special } from 'valibot';
+import { type Input, object, special, array } from 'valibot';
 
 const UploadSchema = object({
-	imageFile: special<NoSerialize<Blob>>((input) => input instanceof Blob),
+	imageFiles: array(
+		special<NoSerialize<Blob>>((input) => input instanceof Blob),
+	),
 });
 
 type UploadForm = Input<typeof UploadSchema>;
@@ -14,27 +16,31 @@ export const useFormAction = formAction$<UploadForm>(
 	},
 	{
 		validate: valiForm$(UploadSchema),
-		files: ['imageFile'],
+		files: ['imageFiles'],
 	},
 );
 
 export default component$(() => {
-	const [, { Form, Field }] = useForm({
-		loader: { value: { imageFile: undefined } },
+	const [, { Form, Field, FieldArray }] = useForm({
+		loader: { value: { imageFiles: [] } },
 		action: useFormAction(),
 		validate: valiForm$(UploadSchema),
 	});
 
 	return (
 		<div>
-			<Form encType='multipart/form-data' class='flex flex-col'>
-				<Field name='imageFile' type='File'>
-					{(field, props) => <input type='file' {...props} />}
-				</Field>
+			{/* <Form encType='multipart/form-data' class='flex flex-col'>
+				<FieldArray name='imageFiles'>
+					{(imageList) => (
+						<Field name='imageFiles' type='File[]'>
+							{(field, props) => <input type='file' {...props} />}
+						</Field>
+					)}
+				</FieldArray>
 				<button type='submit' class='bg-blue-500 text-white'>
 					Submit
 				</button>
-			</Form>
+			</Form> */}
 		</div>
 	);
 });

@@ -77,30 +77,31 @@ export default component$<ImageChooserProps>(({ index, field, props }) => {
 					) : null}
 					{/* Try first to convert to text to check that is properly catch  */}
 					{/* <input
+					aria-label='Image'
+					accept='image/*'
+					class='absolute left-0 top-0 z-0 h-32 w-32 cursor-pointer opacity-0'
+					type='file'
+					name={`images.${index}.imageFile`}
+					onChange$={(event) => {
+						const file = event.target.files?.[0];
+
+						if (file) {
+							const reader = new FileReader();
+
+							reader.onloadend = () => {
+								previewImage.value = reader.result as string;
+							};
+
+							reader.readAsDataURL(file);
+						} else {
+							previewImage.value = null;
+						}
+					}}
+				/> */}
+					<input
 						aria-label='Image'
 						accept='image/*'
-						class='absolute left-0 top-0 z-0 h-32 w-32 cursor-pointer opacity-0'
-						type='file'
-						name={`images.${index}.imageFile`}
-						onChange$={(event) => {
-							const file = event.target.files?.[0];
-
-							if (file) {
-								const reader = new FileReader();
-
-								reader.onloadend = () => {
-									previewImage.value = reader.result as string;
-								};
-
-								reader.readAsDataURL(file);
-							} else {
-								previewImage.value = null;
-							}
-						}}
-					/> */}
-					<input
-						accept='image/*'
-						name={`images.$${index}.imageFile`}
+						name={`images.${index}$.imageFile`}
 						type='file'
 					/>
 				</label>

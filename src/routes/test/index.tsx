@@ -13,6 +13,7 @@ import { prisma } from '@/db/db.server';
 import { Button, Icon, Label, StatusButton } from '@/components/ui';
 import { InputField, TextareaField } from '@/components/fields';
 import ImageChooser from '@/components/form/image-chooser';
+import { cn } from '@/utils/misc';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const TITLE_MIN_LENGTH = 1;
@@ -24,7 +25,7 @@ const ImageFieldsetSchema = z.object({
 	id: z.string().optional(),
 	imageFile: z
 		.any()
-		.refine((file) => file instanceof File && file.size <= MAX_UPLOAD_SIZE)
+		// .refine((file) => file.size <= MAX_UPLOAD_SIZE)
 		.optional(),
 	altText: z.string().optional(),
 });
@@ -78,7 +79,7 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 );
 
 export const useFormAction = formAction$<EditNoteForm>((values) => {
-	console.log(values);
+	console.log(values.images);
 }, zodForm$(NoteEditorSchema));
 
 export default component$(() => {
@@ -152,6 +153,33 @@ export default component$(() => {
 											</button>
 											<fieldset>
 												<div class='flex gap-3'>
+													<Field name={`images.${index}.id`}>
+														{(field, props) => (
+															<ImageChooser
+																index={index}
+																field={field}
+																props={props}
+															/>
+															// <div class='w-32'>
+															// 	<div class='relative h-32 w-32'>
+															// 		<label
+															// 			for={`images.${index}.id`}
+															// 			class={cn(
+															// 				'group absolute h-32 w-32 rounded-lg',
+															// 				{
+															// 					'bg-accent opacity-40 focus-within:opacity-100 hover:opacity-100':
+															// 						true,
+															// 				},
+															// 			)}
+															// 		>
+															// 			<div class='flex h-32 w-32 items-center justify-center rounded-lg border border-muted-foreground text-4xl text-muted-foreground'>
+															// 				<Icon name='plus' />
+															// 			</div>
+															// 		</label>
+															// 	</div>
+															// </div>
+														)}
+													</Field>
 													<Field name={`images.${index}.altText`}>
 														{(field, props) => (
 															<div class='flex-1'>

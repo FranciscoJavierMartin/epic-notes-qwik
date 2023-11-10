@@ -78,9 +78,16 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 	},
 );
 
-export const useFormAction = formAction$<EditNoteForm>((values) => {
-	console.log(values.images);
-}, zodForm$(NoteEditorSchema));
+export const useFormAction = formAction$<EditNoteForm>(
+	(values) => {
+		console.log(values.images);
+	},
+	{
+		validate: zodForm$(NoteEditorSchema),
+		files: ['images.$.imageFile'],
+		arrays: ['images'],
+	},
+);
 
 export default component$(() => {
 	const [editNoteForm, { Form, Field, FieldArray }] = useForm<EditNoteForm>({
@@ -155,31 +162,38 @@ export default component$(() => {
 												<div class='flex gap-3'>
 													<Field name={`images.${index}.id`}>
 														{(field, props) => (
-															<ImageChooser
-																index={index}
-																field={field}
-																props={props}
-															/>
-															// <div class='w-32'>
-															// 	<div class='relative h-32 w-32'>
-															// 		<label
-															// 			for={`images.${index}.id`}
-															// 			class={cn(
-															// 				'group absolute h-32 w-32 rounded-lg',
-															// 				{
-															// 					'bg-accent opacity-40 focus-within:opacity-100 hover:opacity-100':
-															// 						true,
-															// 				},
-															// 			)}
-															// 		>
-															// 			<div class='flex h-32 w-32 items-center justify-center rounded-lg border border-muted-foreground text-4xl text-muted-foreground'>
-															// 				<Icon name='plus' />
-															// 			</div>
-															// 		</label>
-															// 	</div>
-															// </div>
+															<>
+																<input
+																	{...props}
+																	type='hidden'
+																	value={field.value}
+																/>
+																<ImageChooser
+																	name={`images.${index}.imageFile`}
+																	imageId={field.value}
+																/>
+															</>
 														)}
 													</Field>
+													{/* <div>
+														<input
+															name={`images.${index}.imageFile`}
+															type='file'
+															accept='image/*'
+														/>
+													</div> */}
+													{/* <Field name={`images.${index}.imageFile`} type='File'>
+														{(field, props) => (
+															<div>
+																<input
+																	{...props}
+																	name={`images.${index}.imageFile`}
+																	type='file'
+																	accept='image/*'
+																/>
+															</div>
+														)}
+													</Field> */}
 													<Field name={`images.${index}.altText`}>
 														{(field, props) => (
 															<div class='flex-1'>

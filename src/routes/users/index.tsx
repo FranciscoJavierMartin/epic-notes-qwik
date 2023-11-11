@@ -9,11 +9,12 @@ const UserSearchResultSchema = z.object({
 	id: z.string(),
 	username: z.string(),
 	name: z.string().nullable(),
+	imageId: z.string().nullable(),
 });
 
 const UserSearchResultsSchema = z.array(UserSearchResultSchema);
 
-export const useUserSearch = routeLoader$(async ({ redirect, query, json }) => {
+export const useUserSearch = routeLoader$(async ({ redirect, query }) => {
 	const searchTerm = query.get('search');
 
 	if (searchTerm === '') {
@@ -23,14 +24,20 @@ export const useUserSearch = routeLoader$(async ({ redirect, query, json }) => {
 	const like = `%${searchTerm ?? ''}%`;
 
 	const rawUsers = await prisma.$queryRaw`
-			SELECT id, username, name
-			FROM User
-			WHERE username LIKE ${like}
-			OR name LIKE ${like}
-			LIMIT 50
-		`;
+		SELECT User.id, User.username, User.name, UserImage.id AS imageId
+		FROM User
+		LEFT JOIN UserImage ON UserImage.userId = User.id
+		WHERE User.username LIKE ${like}
+		OR User.name LIKE ${like}
+		LIMIT 50
+	`;
 
-	const result = UserSearchResultsSchema.safeParse(rawUsers);
+	const result = import.meta.env.PROD
+		? ({
+				success: true,
+				data: rawUsers as z.infer<typeof UserSearchResultsSchema>,
+		  } as const)
+		: UserSearchResultsSchema.safeParse(rawUsers);
 
 	return result.success
 		? ({ status: 'idle', users: result.data } as const)
@@ -56,12 +63,7 @@ export default component$(() => {
 			<main>
 				{data.value.status === 'idle' ? (
 					data.value.users.length ? (
-						<ul
-							class={cn(
-								'flex w-full flex-wrap items-center justify-center gap-4 delay-200',
-								{ 'opacity-50': true },
-							)}
-						>
+						<ul class='flex w-full flex-wrap items-center justify-center gap-4 delay-200'>
 							{data.value.users.map((user) => (
 								<li key={user.id}>
 									<Link
@@ -70,7 +72,7 @@ export default component$(() => {
 									>
 										<img
 											alt={user.name ?? user.username}
-											src={getUserImgSrc(user.id)}
+											src={getUserImgSrc(user.imageId)}
 											width={64}
 											height={64}
 											class='h-16 w-16 rounded-full'

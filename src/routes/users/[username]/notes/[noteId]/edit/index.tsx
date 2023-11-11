@@ -12,7 +12,7 @@ import {
 import { createId as cuid } from '@paralleldrive/cuid2';
 import { Button, Icon, Label, StatusButton } from '@/components/ui';
 import { InputField, TextareaField } from '@/components/fields';
-import ImageChooser from '@/components/form/image-chooser';
+import ImagePicker from '@/components/ui/image-picker';
 import { prisma } from '@/db/db.server';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
@@ -251,7 +251,7 @@ export default component$(() => {
 																	type='hidden'
 																	value={field.value}
 																/>
-																<ImageChooser
+																<ImagePicker
 																	name={`images.${index}.imageFile`}
 																	imageId={field.value}
 																/>

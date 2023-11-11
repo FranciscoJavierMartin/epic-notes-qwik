@@ -89,7 +89,7 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 
 export const useFormAction = formAction$<EditNoteForm>(
 	async ({ title, content, images }, { params, error, redirect }) => {
-		if (params.noteId) {
+		if (!params.noteId) {
 			throw error(400, 'noteId is required');
 		}
 

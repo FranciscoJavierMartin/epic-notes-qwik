@@ -83,7 +83,7 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 			throw error(404, 'Note not found');
 		}
 
-		return note;
+		return note as any;
 	},
 );
 
@@ -258,25 +258,6 @@ export default component$(() => {
 															</>
 														)}
 													</Field>
-													{/* <div>
-														<input
-															name={`images.${index}.imageFile`}
-															type='file'
-															accept='image/*'
-														/>
-													</div> */}
-													{/* <Field name={`images.${index}.imageFile`} type='File'>
-														{(field, props) => (
-															<div>
-																<input
-																	{...props}
-																	name={`images.${index}.imageFile`}
-																	type='file'
-																	accept='image/*'
-																/>
-															</div>
-														)}
-													</Field> */}
 													<Field name={`images.${index}.altText`}>
 														{(field, props) => (
 															<div class='flex-1'>

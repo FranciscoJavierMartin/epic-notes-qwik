@@ -217,7 +217,9 @@ export default component$(() => {
 					<Button
 						class='mt-3'
 						onClick$={$(() => {
-							insert(editNoteForm, 'images', { value: {} });
+							insert(editNoteForm, 'images', {
+								value: { altText: '', id: undefined, imageFile: undefined },
+							});
 						})}
 					>
 						<span aria-hidden class='flex gap-1'>

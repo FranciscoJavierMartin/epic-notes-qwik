@@ -25,7 +25,7 @@ const ImageFieldsetSchema = z.object({
 	id: z.string().optional(),
 	imageFile: z
 		.any()
-		// .refine((file) => file.size <= MAX_UPLOAD_SIZE)
+		.refine((file) => file.size <= MAX_UPLOAD_SIZE)
 		.optional(),
 	altText: z.string().optional(),
 });

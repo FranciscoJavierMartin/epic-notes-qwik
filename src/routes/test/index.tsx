@@ -89,37 +89,56 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 );
 
 export const useFormAction = formAction$<EditNoteForm>(
-	async ({ title, content, images }, { params, error, redirect }) => {
+	async ({ title, content, images }, { error, redirect }) => {
 		// if (params.noteId) {
 		// 	throw error(400, 'noteId is required');
 		// }
 
-		const imagesToUpdate = await Promise.all(
-			images?.filter(hasImageId).map(async (image) =>
-				hasImageFile(image)
-					? {
-							id: image.id!,
-							altText: image.altText,
-							contentType: image.imageFile.type,
-							blob: Buffer.from(await image.imageFile.arrayBuffer()),
-					  }
-					: {
-							id: image.id!,
-							altText: image.altText,
-					  },
-			) ?? [],
-		);
+		// TODO: Handle error when images list size is greater than 5 or the images are large than 3Mb.
 
-		const newImages = await Promise.all(
-			images
-				?.filter(hasImageFile)
-				.filter((image) => !hasImageId(image))
-				.map(async (image) => ({
-					altText: image.altText,
-					contentType: image.imageFile.type,
-					blob: Buffer.from(await image.imageFile.arrayBuffer()),
-				})) ?? [],
-		);
+		console.log('');
+		console.log('');
+		console.log('');
+		console.log('');
+		console.log('');
+		console.log('Update');
+		console.log('');
+		console.log('');
+		console.log('');
+		console.log('');
+		console.log('');
+
+		const params = {
+			noteId: 'd27a197e',
+			username: 'kody',
+		};
+
+		// const imagesToUpdate = await Promise.all(
+		// 	images?.filter(hasImageId).map(async (image) =>
+		// 		hasImageFile(image)
+		// 			? {
+		// 					id: image.id!,
+		// 					altText: image.altText,
+		// 					contentType: image.imageFile.type,
+		// 					blob: Buffer.from(await image.imageFile.arrayBuffer()),
+		// 			  }
+		// 			: {
+		// 					id: image.id!,
+		// 					altText: image.altText,
+		// 			  },
+		// 	) ?? [],
+		// );
+
+		// const newImages = await Promise.all(
+		// 	images
+		// 		?.filter(hasImageFile)
+		// 		.filter((image) => !hasImageId(image))
+		// 		.map(async (image) => ({
+		// 			altText: image.altText,
+		// 			contentType: image.imageFile.type,
+		// 			blob: Buffer.from(await image.imageFile.arrayBuffer()),
+		// 		})) ?? [],
+		// );
 
 		// console.log(values);
 		// console.log('--------------------------------------------------------');
@@ -127,47 +146,47 @@ export const useFormAction = formAction$<EditNoteForm>(
 		// console.log('--------------------------------------------------------');
 		// console.log(newImages);
 
-		await prisma.note.update({
-			select: { id: true },
-			where: { id: params.noteId },
-			data: { title, content },
-		});
+		// await prisma.note.update({
+		// 	select: { id: true },
+		// 	where: { id: params.noteId },
+		// 	data: { title, content },
+		// });
 
-		await prisma.noteImage.deleteMany({
-			where: {
-				id: { notIn: imagesToUpdate.map((image) => image.id) },
-				noteId: params.noteId,
-			},
-		});
+		// await prisma.noteImage.deleteMany({
+		// 	where: {
+		// 		id: { notIn: imagesToUpdate.map((image) => image.id) },
+		// 		noteId: params.noteId,
+		// 	},
+		// });
 
-		for (const update of imagesToUpdate) {
-			await prisma.noteImage.update({
-				select: {
-					id: true,
-				},
-				where: {
-					id: update.id,
-				},
-				data: {
-					...update,
-					id: update.blob ? cuid() : update.id,
-				},
-			});
-		}
+		// for (const update of imagesToUpdate) {
+		// 	await prisma.noteImage.update({
+		// 		select: {
+		// 			id: true,
+		// 		},
+		// 		where: {
+		// 			id: update.id,
+		// 		},
+		// 		data: {
+		// 			...update,
+		// 			id: update.blob ? cuid() : update.id,
+		// 		},
+		// 	});
+		// }
 
-		for (const newImage of newImages) {
-			await prisma.noteImage.create({
-				select: {
-					id: true,
-				},
-				data: {
-					...newImage,
-					noteId: params.noteId,
-				},
-			});
-		}
+		// for (const newImage of newImages) {
+		// 	await prisma.noteImage.create({
+		// 		select: {
+		// 			id: true,
+		// 		},
+		// 		data: {
+		// 			...newImage,
+		// 			noteId: params.noteId,
+		// 		},
+		// 	});
+		// }
 
-		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
+		// redirect(302, `/users/${params.username}/notes/${params.noteId}`);
 	},
 	{
 		validate: zodForm$(NoteEditorSchema),
@@ -191,7 +210,7 @@ export default component$(() => {
 			<Form
 				id='note-editor'
 				onSubmit$={handleSubmit}
-				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pb-28 pt-12'
+				class='flex h-full flex-col gap-y-4 overflow-x-hidden px-10 pt-12'
 				encType='multipart/form-data'
 			>
 				<button type='submit' class='hidden' />
@@ -301,21 +320,23 @@ export default component$(() => {
 							</div>
 						)}
 					</FieldArray>
-					<Button
-						class='mt-3'
-						onClick$={$(() => {
-							insert(editNoteForm, 'images', {
-								value: { altText: '', id: undefined, imageFile: undefined },
-							});
-						})}
-					>
-						<span aria-hidden class='flex gap-1'>
-							<Icon name='plus' /> Image
-						</span>{' '}
-						<span class='sr-only'>Add image</span>
-					</Button>
 				</div>
 			</Form>
+			<div class='w-full px-10 pb-28'>
+				<Button
+					class='mt-3 w-full'
+					onClick$={$(() => {
+						insert(editNoteForm, 'images', {
+							value: { altText: '', id: undefined, imageFile: undefined },
+						});
+					})}
+				>
+					<span aria-hidden class='flex gap-1'>
+						<Icon name='plus' /> Image
+					</span>{' '}
+					<span class='sr-only'>Add image</span>
+				</Button>
+			</div>
 			<div class='floating-toolbar'>
 				<Button form='note-editor' variant='destructive' type='reset'>
 					Reset

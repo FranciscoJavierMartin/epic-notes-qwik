@@ -124,48 +124,28 @@ export const useFormAction = formAction$<EditNoteForm>(
 				})) ?? [],
 		);
 
-		await prisma.$transaction(async ($prisma) => {
-			await $prisma.note.update({
-				select: { id: true },
-				where: { id: params.noteId },
-				data: { title, content },
-			});
-
-			await $prisma.noteImage.deleteMany({
-				where: {
-					id: { notIn: imagesToUpdate.map((image) => image.id) },
-					noteId,
+		await prisma.note.update({
+			select: { id: true },
+			where: { id: params.noteId },
+			data: {
+				title,
+				content,
+				images: {
+					deleteMany: {
+						id: {
+							notIn: imagesToUpdate.map((image) => image.id),
+						},
+					},
+					updateMany: imagesToUpdate.map((image) => ({
+						where: { id: image.id },
+						data: {
+							...image,
+							id: image.blob ? cuid() : image.id,
+						},
+					})),
+					create: newImages,
 				},
-			});
-
-			throw new Error('Gotcha 🧝‍♂️, https://kcd.im/promises');
-
-			for (const update of imagesToUpdate) {
-				await $prisma.noteImage.update({
-					select: {
-						id: true,
-					},
-					where: {
-						id: update.id,
-					},
-					data: {
-						...update,
-						id: update.blob ? cuid() : update.id,
-					},
-				});
-			}
-
-			for (const newImage of newImages) {
-				await $prisma.noteImage.create({
-					select: {
-						id: true,
-					},
-					data: {
-						...newImage,
-						noteId,
-					},
-				});
-			}
+			},
 		});
 
 		redirect(302, `/users/${params.username}/notes/${noteId}`);

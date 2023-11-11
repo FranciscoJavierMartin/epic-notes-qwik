@@ -89,7 +89,9 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 
 export const useFormAction = formAction$<EditNoteForm>(
 	async ({ title, content, images }, { params, error, redirect }) => {
-		if (!params.noteId) {
+		const { noteId } = params;
+
+		if (!noteId) {
 			throw error(400, 'noteId is required');
 		}
 
@@ -122,47 +124,51 @@ export const useFormAction = formAction$<EditNoteForm>(
 				})) ?? [],
 		);
 
-		await prisma.note.update({
-			select: { id: true },
-			where: { id: params.noteId },
-			data: { title, content },
-		});
+		await prisma.$transaction(async ($prisma) => {
+			await $prisma.note.update({
+				select: { id: true },
+				where: { id: params.noteId },
+				data: { title, content },
+			});
 
-		await prisma.noteImage.deleteMany({
-			where: {
-				id: { notIn: imagesToUpdate.map((image) => image.id) },
-				noteId: params.noteId,
-			},
-		});
-
-		for (const update of imagesToUpdate) {
-			await prisma.noteImage.update({
-				select: {
-					id: true,
-				},
+			await $prisma.noteImage.deleteMany({
 				where: {
-					id: update.id,
-				},
-				data: {
-					...update,
-					id: update.blob ? cuid() : update.id,
+					id: { notIn: imagesToUpdate.map((image) => image.id) },
+					noteId,
 				},
 			});
-		}
 
-		for (const newImage of newImages) {
-			await prisma.noteImage.create({
-				select: {
-					id: true,
-				},
-				data: {
-					...newImage,
-					noteId: params.noteId,
-				},
-			});
-		}
+			throw new Error('Gotcha 🧝‍♂️, https://kcd.im/promises');
 
-		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
+			for (const update of imagesToUpdate) {
+				await $prisma.noteImage.update({
+					select: {
+						id: true,
+					},
+					where: {
+						id: update.id,
+					},
+					data: {
+						...update,
+						id: update.blob ? cuid() : update.id,
+					},
+				});
+			}
+
+			for (const newImage of newImages) {
+				await $prisma.noteImage.create({
+					select: {
+						id: true,
+					},
+					data: {
+						...newImage,
+						noteId,
+					},
+				});
+			}
+		});
+
+		redirect(302, `/users/${params.username}/notes/${noteId}`);
 	},
 	{
 		validate: zodForm$(NoteEditorSchema),

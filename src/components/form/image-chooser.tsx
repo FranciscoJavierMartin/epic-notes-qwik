@@ -1,5 +1,5 @@
 import { component$, useSignal } from '@builder.io/qwik';
-import { Icon } from '../ui';
+import { Icon } from '@/components/ui';
 import { cn, getNoteImgSrc } from '@/utils/misc';
 
 interface ImageChooserProps {

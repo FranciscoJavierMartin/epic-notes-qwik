@@ -51,6 +51,15 @@ const NoteEditorSchema = z.object({
 });
 
 type EditNoteForm = typeof NoteEditorSchema._type;
+type ImageFieldset = typeof ImageFieldsetSchema._type;
+
+function hasImageFile(image: ImageFieldset): boolean {
+	return Boolean(image.imageFile?.size && image.imageFile?.size > 0);
+}
+
+function hasImageId(image: ImageFieldset): boolean {
+	return Boolean(image.id);
+}
 
 export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 	async ({ params, error }) => {
@@ -79,8 +88,21 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 );
 
 export const useFormAction = formAction$<EditNoteForm>(
-	(values) => {
-		console.log(values.images);
+	(values, { params, error }) => {
+		// if (params.noteId) {
+		// 	throw error(400, 'noteId is required');
+		// }
+
+		const imageUpdates = values.images?.filter(hasImageId);
+		const newImages = values.images
+			?.filter(hasImageFile)
+			.filter((image) => !hasImageId(image));
+
+		console.log(values);
+		console.log('--------------------------------------------------------');
+		console.log(imageUpdates);
+		console.log('--------------------------------------------------------');
+		console.log(newImages);
 	},
 	{
 		validate: zodForm$(NoteEditorSchema),

@@ -253,6 +253,7 @@ export default component$(() => {
 											key={image}
 											class='relative border-b-2 border-muted-foreground pb-4'
 										>
+											{/* TODO: Avoid submit form when click on remove */}
 											<button
 												class='absolute right-0 top-0 text-foreground-destructive'
 												onClick$={$(() =>
@@ -323,6 +324,7 @@ export default component$(() => {
 				</div>
 			</Form>
 			<div class='w-full px-10 pb-28'>
+				{/* TODO: Avoid submit form when click on add. Fixed for now but the button should be inside form */}
 				<Button
 					class='mt-3 w-full'
 					onClick$={$(() => {

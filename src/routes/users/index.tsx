@@ -29,6 +29,13 @@ export const useUserSearch = routeLoader$(async ({ redirect, query }) => {
 		LEFT JOIN UserImage ON UserImage.userId = User.id
 		WHERE User.username LIKE ${like}
 		OR User.name LIKE ${like}
+		ORDER BY (
+			SELECT Note.updatedAt
+			FROM Note
+			WHERE Note.ownerId = user.id
+			ORDER BY Note.updatedAt DESC
+			LIMIT 1
+		) DESC
 		LIMIT 50
 	`;
 

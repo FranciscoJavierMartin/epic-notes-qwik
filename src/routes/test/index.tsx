@@ -9,6 +9,7 @@ import {
 	remove,
 	insert,
 } from '@modular-forms/qwik';
+import { createId as cuid } from '@paralleldrive/cuid2';
 import { prisma } from '@/db/db.server';
 import { Button, Icon, Label, StatusButton } from '@/components/ui';
 import { InputField, TextareaField } from '@/components/fields';
@@ -88,21 +89,85 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 );
 
 export const useFormAction = formAction$<EditNoteForm>(
-	(values, { params, error }) => {
+	async ({ title, content, images }, { params, error, redirect }) => {
 		// if (params.noteId) {
 		// 	throw error(400, 'noteId is required');
 		// }
 
-		const imageUpdates = values.images?.filter(hasImageId);
-		const newImages = values.images
-			?.filter(hasImageFile)
-			.filter((image) => !hasImageId(image));
+		const imagesToUpdate = await Promise.all(
+			images?.filter(hasImageId).map(async (image) =>
+				hasImageFile(image)
+					? {
+							id: image.id!,
+							altText: image.altText,
+							contentType: image.imageFile.type,
+							blob: Buffer.from(await image.imageFile.arrayBuffer()),
+					  }
+					: {
+							id: image.id!,
+							altText: image.altText,
+					  },
+			) ?? [],
+		);
 
-		console.log(values);
-		console.log('--------------------------------------------------------');
-		console.log(imageUpdates);
-		console.log('--------------------------------------------------------');
-		console.log(newImages);
+		const newImages = await Promise.all(
+			images
+				?.filter(hasImageFile)
+				.filter((image) => !hasImageId(image))
+				.map(async (image) => ({
+					altText: image.altText,
+					contentType: image.imageFile.type,
+					blob: Buffer.from(await image.imageFile.arrayBuffer()),
+				})) ?? [],
+		);
+
+		// console.log(values);
+		// console.log('--------------------------------------------------------');
+		// console.log(imagesToUpdate);
+		// console.log('--------------------------------------------------------');
+		// console.log(newImages);
+
+		await prisma.note.update({
+			select: { id: true },
+			where: { id: params.noteId },
+			data: { title, content },
+		});
+
+		await prisma.noteImage.deleteMany({
+			where: {
+				id: { notIn: imagesToUpdate.map((image) => image.id) },
+				noteId: params.noteId,
+			},
+		});
+
+		for (const update of imagesToUpdate) {
+			await prisma.noteImage.update({
+				select: {
+					id: true,
+				},
+				where: {
+					id: update.id,
+				},
+				data: {
+					...update,
+					id: update.blob ? cuid() : update.id,
+				},
+			});
+		}
+
+		for (const newImage of newImages) {
+			await prisma.noteImage.create({
+				select: {
+					id: true,
+				},
+				data: {
+					...newImage,
+					noteId: params.noteId,
+				},
+			});
+		}
+
+		redirect(302, `/users/${params.username}/notes/${params.noteId}`);
 	},
 	{
 		validate: zodForm$(NoteEditorSchema),

@@ -1,48 +1,51 @@
 import { component$ } from '@builder.io/qwik';
-import { Link, routeLoader$ } from '@builder.io/qwik-city';
-import userAvatar from '@/assets/user.png';
+import { Link, routeLoader$, z } from '@builder.io/qwik-city';
 import { SearchBar } from '@/components/fields';
-import { cn } from '@/utils/misc';
+import { prisma } from '@/db/db.server';
+import { cn, getUserImgSrc } from '@/utils/misc';
+import { ErrorList } from '@/components/ui';
 
-export const useOwnerNotes = routeLoader$(
-	async ({ params, error, redirect, query }) => {
-		const searchTerm = query.get('search');
+const UserSearchResultSchema = z.object({
+	id: z.string(),
+	username: z.string(),
+	name: z.string().nullable(),
+});
 
-		if (searchTerm === '') {
-			throw redirect(302, '/users');
-		}
+const UserSearchResultsSchema = z.array(UserSearchResultSchema);
 
-		return {
-			status: 'idle',
-			users: [
-				{
-					id: '9d6eba59daa2fc2078cf8205cd451041',
-					email: 'kody@kcd.dev',
-					username: 'kody',
-					name: 'Kody',
-					createdAt: new Date('2023-10-30T22:27:04.762Z'),
-					image: userAvatar,
-				},
-				{
-					id: '9d6eba59daa2fc2078cf8205cd451042',
-					email: 'john@doe.dev',
-					username: 'john',
-					name: 'John',
-					createdAt: new Date('2023-10-30T22:27:04.762Z'),
-					image: userAvatar,
-				},
-			].map((u) => ({
-				id: u.id,
-				username: u.username,
-				name: u.name,
-				image: u.image,
-			})),
-		};
-	},
-);
+export const useUserSearch = routeLoader$(async ({ redirect, query, json }) => {
+	const searchTerm = query.get('search');
+
+	if (searchTerm === '') {
+		throw redirect(302, '/users');
+	}
+
+	const like = `%${searchTerm ?? ''}%`;
+
+	const rawUsers = await prisma.$queryRaw`
+			SELECT id, username, name
+			FROM User
+			WHERE username LIKE ${like}
+			OR name LIKE ${like}
+			LIMIT 50
+		`;
+
+	const result = UserSearchResultsSchema.safeParse(rawUsers);
+
+	return result.success
+		? ({ status: 'idle', users: result.data } as const)
+		: ({
+				status: 'error',
+				error: result.error.message,
+		  } as const);
+});
 
 export default component$(() => {
-	const data = useOwnerNotes();
+	const data = useUserSearch();
+
+	if (data.value.status === 'error') {
+		console.error(data.value.error);
+	}
 
 	return (
 		<div class='container mb-48 mt-36 flex flex-col items-center justify-center gap-6'>
@@ -67,7 +70,7 @@ export default component$(() => {
 									>
 										<img
 											alt={user.name ?? user.username}
-											src={user.image}
+											src={getUserImgSrc(user.id)}
 											width={64}
 											height={64}
 											class='h-16 w-16 rounded-full'
@@ -87,6 +90,8 @@ export default component$(() => {
 					) : (
 						<p>No users found</p>
 					)
+				) : data.value.status === 'error' ? (
+					<ErrorList errors={['There was an error parsing the result']} />
 				) : null}
 			</main>
 		</div>

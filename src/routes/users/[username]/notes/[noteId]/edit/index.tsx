@@ -88,7 +88,7 @@ export const useFormLoader = routeLoader$<InitialValues<EditNoteForm>>(
 );
 
 export const useFormAction = formAction$<EditNoteForm>(
-	async ({ title, content, images }, { params, error, redirect }) => {
+	async ({ title, content, images = [] }, { params, error, redirect }) => {
 		const { noteId } = params;
 
 		if (!noteId) {
@@ -98,7 +98,7 @@ export const useFormAction = formAction$<EditNoteForm>(
 		// TODO: Handle error when images list size is greater than 5 or the images are large than 3Mb.
 
 		const imagesToUpdate = await Promise.all(
-			images?.filter(hasImageId).map(async (image) =>
+			images.filter(hasImageId).map(async (image) =>
 				hasImageFile(image)
 					? {
 							id: image.id!,
@@ -110,18 +110,18 @@ export const useFormAction = formAction$<EditNoteForm>(
 							id: image.id!,
 							altText: image.altText,
 					  },
-			) ?? [],
+			),
 		);
 
 		const newImages = await Promise.all(
 			images
-				?.filter(hasImageFile)
+				.filter(hasImageFile)
 				.filter((image) => !hasImageId(image))
 				.map(async (image) => ({
 					altText: image.altText,
 					contentType: image.imageFile.type,
 					blob: Buffer.from(await image.imageFile.arrayBuffer()),
-				})) ?? [],
+				})),
 		);
 
 		await prisma.note.update({

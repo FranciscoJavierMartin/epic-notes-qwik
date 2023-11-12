@@ -1,9 +1,9 @@
 import { component$ } from '@builder.io/qwik';
 import { Link, routeLoader$, z } from '@builder.io/qwik-city';
 import { SearchBar } from '@/components/fields';
-import { prisma } from '@/db/db.server';
-import { cn, getUserImgSrc } from '@/utils/misc';
 import { ErrorList } from '@/components/ui';
+import { prisma } from '@/db/db.server';
+import { getUserImgSrc } from '@/utils/misc';
 
 const UserSearchResultSchema = z.object({
 	id: z.string(),

@@ -5,19 +5,21 @@ import {
 	routeLoader$,
 	useLocation,
 } from '@builder.io/qwik-city';
-import userAvatar from '@/assets/user.png';
 import Spacer from '@/components/ui/spacer';
 import { Button } from '@/components/ui';
+import { prisma } from '@/db/db.server';
+import { getUserImgSrc } from '@/utils/misc';
 
 export const useUserProfile = routeLoader$(async ({ params, error }) => {
-	const user = {
-		id: '9d6eba59daa2fc2078cf8205cd451041',
-		email: 'kody@kcd.dev',
-		username: 'kody',
-		name: 'Kody',
-		createdAt: new Date('2023-10-30T22:27:04.762Z'),
-		image: userAvatar,
-	};
+	const user = await prisma.user.findFirst({
+		select: {
+			name: true,
+			username: true,
+			createdAt: true,
+			image: { select: { id: true } },
+		},
+		where: { username: params.username },
+	});
 
 	if (!user) {
 		throw error(404, 'User not found');
@@ -25,7 +27,7 @@ export const useUserProfile = routeLoader$(async ({ params, error }) => {
 
 	return {
 		user,
-		userJoinedDisplay: new Date(user.createdAt).toLocaleDateString(),
+		userJoinedDisplay: user.createdAt.toLocaleDateString(),
 	};
 });
 
@@ -42,7 +44,7 @@ export default component$(() => {
 					<div class='absolute -top-40'>
 						<div class='relative'>
 							<img
-								src={data.value.user.image}
+								src={getUserImgSrc(data.value.user.image?.id)}
 								alt={userDisplayName}
 								width={208}
 								height={208}

@@ -1,24 +1,22 @@
 import {
-	type LabelHTMLAttributes,
-	type TextareaHTMLAttributes,
 	component$,
+	type TextareaHTMLAttributes,
+	type LabelHTMLAttributes,
 	useId,
 } from '@builder.io/qwik';
-import type { ListOfErrors } from '../ui/error-list';
-import { ErrorList, Label, Textarea } from '../ui';
+import { ErrorList, Label, Textarea } from '@/components/ui';
 
-interface TextareaFieldProps {
+interface TextareaFieldProps
+	extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'children'> {
+	error: string;
 	labelProps: LabelHTMLAttributes<HTMLLabelElement>;
-	textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement>;
-	errors?: ListOfErrors;
-	class?: string;
 }
 
 export default component$<TextareaFieldProps>(
-	({ labelProps, textareaProps, errors, class: className }) => {
+	({ labelProps, error, class: className, ...props }) => {
 		const fallbackId = useId();
-		const id = textareaProps.id ?? fallbackId;
-		const errorId = errors?.length ? `${id}-error` : undefined;
+		const id = props.id ?? fallbackId;
+		const errorId = error ? `${id}-error` : undefined;
 
 		return (
 			<div class={className}>
@@ -27,10 +25,10 @@ export default component$<TextareaFieldProps>(
 					id={id}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
-					{...textareaProps}
+					{...props}
 				/>
 				<div class='min-h-[32px] px-4 pb-3 pt-1'>
-					{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+					{errorId && <ErrorList id={errorId} errors={[error]} />}
 				</div>
 			</div>
 		);

@@ -14,6 +14,7 @@ export default component$<ImagePickerProps>(({ name, imageId, altText }) => {
 		existingImage ? getNoteImgSrc(imageId!) : null,
 	);
 
+	// TODO: Show error message
 	return (
 		<div class='w-32'>
 			<div class='relative h-32 w-32'>

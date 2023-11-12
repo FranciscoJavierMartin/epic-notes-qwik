@@ -1,7 +1,7 @@
 import { Slot, component$ } from '@builder.io/qwik';
 import { Link, routeLoader$, useLocation } from '@builder.io/qwik-city';
-import { cn } from '@/utils/misc';
 import { prisma } from '@/db/db.server';
+import { cn } from '@/utils/misc';
 import userAvatar from '@/assets/user.png';
 
 export const useOwnerNotes = routeLoader$(async ({ params, error }) => {
@@ -20,6 +20,7 @@ export const useOwnerNotes = routeLoader$(async ({ params, error }) => {
 	if (!owner) {
 		throw error(404, 'Owner not found');
 	}
+
 	return { owner };
 });
 
